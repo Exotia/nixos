@@ -9,12 +9,12 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  services.getty.autologinUser = "tony";
+  services.getty.autologinUser = "ole";
 
   networking.hostName = "nixos";
   networking.networkmanager.enable = true;
 
-  time.timeZone = "America/Los_Angeles";
+  time.timeZone = "Europa/Berlin";
 
   programs.hyprland = {
     enable = true;
@@ -22,7 +22,7 @@
     xwayland.enable = true;
   };
 
-  users.users.tony = {
+  users.users.ole = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
     packages = with pkgs; [
