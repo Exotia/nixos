@@ -14,7 +14,6 @@ let
 in
 {
   imports = [
-    ./modules/theme.nix
   ];
 
   home.username = "ole";
@@ -28,8 +27,6 @@ in
   home.sessionPath = [
     "$HOME/.config/scripts"
   ];
-
-  home.file.".local/share/fonts/omarchy.ttf".source = ./config/nixos/omarchy.ttf;
 
   programs.bash = {
     enable = true;
