@@ -9,17 +9,18 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  services.getty.autologinUser = "ole";
-
   networking.hostName = "nixos";
   networking.networkmanager.enable = true;
 
   time.timeZone = "Europa/Berlin";
 
+  #  services.getty.autologinUser = "ole";
+  services.displayManager.ly.enable = true;
+
   programs.hyprland = {
     enable = true;
-    withUWSM = true;
     xwayland.enable = true;
+    withUWSM = true;
   };
 
   users.users.ole = {
@@ -31,15 +32,25 @@
   };
 
   programs.firefox.enable = true;
+
   environment.systemPackages = with pkgs; [
     vim
     wget
     foot
-    waybar
     kitty
+    waybar
+    git
+    hyprpaper
+    gemini-cli
+  ];
+
+  fonts.packages = with pkgs; [
+    nerd-fonts.jetbrains-mono
   ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
   system.stateVersion = "25.05";
 
 }
+
