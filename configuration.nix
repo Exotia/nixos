@@ -23,24 +23,19 @@
     withUWSM = true;
   };
 
+  programs.steam.enable = true;
+
   users.users.ole = {
     isNormalUser = true;
-    extraGroups = [ "wheel" ];
+    extraGroups = [ "wheel" "networkmanager" ];
     packages = with pkgs; [
-      tree
     ];
   };
-
-  programs.firefox.enable = true;
 
   environment.systemPackages = with pkgs; [
     vim
     wget
-    foot
-    kitty
-    waybar
     git
-    hyprpaper
     gemini-cli
   ];
 
