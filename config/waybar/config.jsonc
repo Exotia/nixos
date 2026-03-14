@@ -48,7 +48,7 @@
   "custom/update": {
     "format": "",
     "exec": "arch-update-available",
-    "on-click": "arch-launch-floating-terminal-with-presentation arch-update",
+    "on-click": "nix-launch-floating-terminal-with-presentation arch-update",
     "tooltip-format": "Omarchy update available",
     "signal": 7,
     "interval": 21600
@@ -64,7 +64,7 @@
     "format": "{:L%A %H:%M}",
     "format-alt": "{:L%d %B W%V %Y}",
     "tooltip": false,
-    "on-click-right": "arch-launch-floating-terminal-with-presentation arch-tz-select"
+    "on-click-right": "nix-launch-floating-terminal-with-presentation arch-tz-select"
   },
   "network": {
     "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
@@ -137,7 +137,7 @@
     "on-scroll-right": ""
   },
   "custom/screenrecording-indicator": {
-    "on-click": "arch-cmd-screenrecord",
+    "on-click": "nix-cmd-screenrecord",
     "exec": "$OMARCHY_PATH/default/waybar/indicators/screen-recording.sh",
     "signal": 8,
     "return-type": "json"

@@ -17,6 +17,7 @@ configs = {
   btop = "btop";
   tmux = "tmux";
   scripts = "scripts";
+  default = "default";
 };
 in
 {
