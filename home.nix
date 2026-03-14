@@ -18,6 +18,8 @@ configs = {
   tmux = "tmux";
   scripts = "scripts";
   default = "default";
+  theme = "theme";
+  mpv = "mpv";
 };
 in
 {
