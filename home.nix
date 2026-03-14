@@ -71,7 +71,7 @@ home.packages = with pkgs; [
   tmux
   fastfetch
   vesktop
-  whatsapp-for-linux
+  wasistlos
   nitch
   (pkgs.writeShellApplication {    name = "ns";
     runtimeInputs = with pkgs; [
