@@ -75,6 +75,14 @@ home.packages = with pkgs; [
   vesktop
   wasistlos
   nitch
+  swaybg
+  mako
+  lxqt.lxqt-policykit-agent
+  hyprlock
+  hypridle
+  waybar
+  swayosd
+  hyprpaper
   (pkgs.writeShellApplication {    name = "ns";
     runtimeInputs = with pkgs; [
       fzf
