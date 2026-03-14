@@ -74,11 +74,11 @@ home.packages = with pkgs; [
   tmux
   fastfetch
   vesktop
-  wasistlos
+  kdePackages.wasistlos
   nitch
   swaybg
   mako
-  lxqt.lxqt-policykit-agent
+  lxqt.lxqt-policykit
   hyprlock
   hypridle
   waybar
@@ -88,6 +88,10 @@ home.packages = with pkgs; [
   xdg-terminal-exec
   libnotify
   glib
+  networkmanagerapplet
+  xdg-utils
+  shared-mime-info
+  xdg-desktop-portal-hyprland
   (pkgs.writeShellApplication {    name = "ns";
     runtimeInputs = with pkgs; [
       fzf

@@ -41,7 +41,7 @@ It is not for contributing to Omarchy source code.
 **For end-user customization tasks, NEVER modify anything in `~/.local/share/arch/`** - but READING is safe and encouraged.
 
 This directory contains Omarchy's source files managed by git. Any changes will be:
-- Lost on next `arch-update`
+- Lost on next `nix-update`
 - Cause conflicts with upstream
 - Break the system's update mechanism
 
@@ -111,7 +111,7 @@ cat $(which nix-theme-set)
 | `nix-cmd-*` | System commands | `nix-cmd-screenshot` |
 | `arch-pkg-*` | Package management | `arch-pkg-install <pkg>` |
 | `arch-setup-*` | Initial setup tasks | `arch-setup-fingerprint` |
-| `arch-update-*` | System updates | `arch-update` |
+| `nix-update-*` | System updates | `nix-update` |
 
 ## Configuration Locations
 
@@ -207,7 +207,7 @@ Create scripts in `~/.config/theme/hooks/` to run automatically on events:
 ~/.config/theme/hooks/
 ├── theme-set        # Runs after theme change (receives theme name as $1)
 ├── font-set         # Runs after font change
-└── post-update      # Runs after arch-update
+└── post-update      # Runs after nix-update
 ```
 
 Example hook (`~/.config/theme/hooks/theme-set`):
@@ -305,7 +305,7 @@ arch-font-set <name>         # Change font
 ### System
 
 ```bash
-arch-update                  # Full system update
+nix-update                  # Full system update
 nix-version                 # Show Omarchy version
 arch-debug --no-sudo --print # Debug info (ALWAYS use these flags)
 nix-lock-screen             # Lock screen

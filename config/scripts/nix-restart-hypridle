@@ -2,4 +2,4 @@
 
 # Restart the hypridle service (used for idle detection and auto-lock).
 
-arch-restart-app hypridle
+nix-restart-app hypridle

@@ -510,15 +510,15 @@ show_remove_elixir_menu() {
 
 show_update_menu() {
   case $(menu "Update" "  Omarchy\n󰔫  Channel\n  Config\n󰸌  Extra Themes\n  Process\n󰇅  Hardware\n  Firmware\n  Password\n  Timezone\n  Time") in
-  *Omarchy*) present_terminal arch-update ;;
+  *Omarchy*) present_terminal nix-update ;;
   *Channel*) show_update_channel_menu ;;
   *Config*) show_update_config_menu ;;
   *Themes*) present_terminal arch-theme-update ;;
   *Process*) show_update_process_menu ;;
   *Hardware*) show_update_hardware_menu ;;
-  *Firmware*) present_terminal arch-update-firmware ;;
+  *Firmware*) present_terminal nix-update-firmware ;;
   *Timezone*) present_terminal arch-tz-select ;;
-  *Time*) present_terminal arch-update-time ;;
+  *Time*) present_terminal nix-update-time ;;
   *Password*) show_update_password_menu ;;
   *) show_main_menu ;;
   esac
