@@ -1,0 +1,5 @@
+#!/bin/bash
+echo "Updating NixOS system..."
+sudo nixos-rebuild switch --flake ~/nixos-dotfiles#nixos
+echo "Update complete. Press any key to exit."
+read -n 1

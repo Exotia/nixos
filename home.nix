@@ -32,6 +32,7 @@ home.stateVersion = "25.05";
 
 home.sessionVariables = {
   NIXOS_PATH = "${config.home.homeDirectory}/nixos-dotfiles/config";
+  XDG_TERMINAL_EXEC = "alacritty";
 };
 
 home.sessionPath = [
@@ -83,6 +84,10 @@ home.packages = with pkgs; [
   waybar
   swayosd
   hyprpaper
+  fcitx5-with-addons
+  xdg-terminal-exec
+  libnotify
+  glib
   (pkgs.writeShellApplication {    name = "ns";
     runtimeInputs = with pkgs; [
       fzf
