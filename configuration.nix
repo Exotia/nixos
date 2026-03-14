@@ -14,6 +14,11 @@
 
   time.timeZone = "Europa/Berlin";
 
+  i18n.defaultLocale = "de_DE.UTF-8";
+  console.keyMap = "de";
+
+  services.xserver.xkb.layout = "de";
+
   #  services.getty.autologinUser = "ole";
   services.displayManager.ly.enable = true;
 
