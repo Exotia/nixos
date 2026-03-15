@@ -74,7 +74,7 @@ home.packages = with pkgs; [
   tmux
   fastfetch
   vesktop
-  kdePackages.wasistlos
+  wasistlos
   nitch
   swaybg
   mako
@@ -84,7 +84,7 @@ home.packages = with pkgs; [
   waybar
   swayosd
   hyprpaper
-  fcitx5-with-addons
+  qt6Packages.fcitx5-with-addons
   xdg-terminal-exec
   libnotify
   glib
