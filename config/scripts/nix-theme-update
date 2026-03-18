@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+
+# Applies colors from ~/nixos-dotfiles/config/theme/colors.toml to all .tpl files
+# and saves the results to the appropriate config paths.
+
+COLORS_FILE="$HOME/nixos-dotfiles/config/theme/colors.toml"
+TEMPLATES_DIR="$HOME/nixos-dotfiles/config/default/themed"
+CONFIGS_DIR="$HOME/nixos-dotfiles/config"
+
+if [[ ! -f $COLORS_FILE ]]; then
+  echo "Error: $COLORS_FILE not found." >&2
+  exit 1
+fi
+
+# Function to get a color from colors.toml
+get_color() {
+  local key="$1"
+  # Simple grep/sed to extract value from toml
+  grep "^$key =" "$COLORS_FILE" | head -1 | cut -d'"' -f2
+}
+
+# Function to get a color and strip the # prefix
+get_color_stripped() {
+  get_color "$1" | sed 's/#//'
+}
+
+# Function to get color in R, G, B format
+get_color_rgb() {
+  local hex
+  hex=$(get_color_stripped "$1")
+  if [[ ${#hex} -ne 6 ]]; then
+    echo "0, 0, 0"
+    return
+  fi
+  local r=$((16#${hex:0:2}))
+  local g=$((16#${hex:2:2}))
+  local b=$((16#${hex:4:2}))
+  echo "$r, $g, $b"
+}
+
+# Create a list of all color keys
+# Get keys from the file (everything before the =)
+KEYS=$(grep "=" "$COLORS_FILE" | cut -d' ' -f1)
+
+# Pre-compute a single sed script for all colors to dramatically improve performance
+SED_SCRIPT=""
+for key in $KEYS; do
+  color=$(get_color "$key")
+  color_stripped=$(get_color_stripped "$key")
+  color_rgb=$(get_color_rgb "$key")
+  
+  SED_SCRIPT+="s|{{ $key }}|$color|g; "
+  SED_SCRIPT+="s|{{ ${key}_strip }}|$color_stripped|g; "
+  SED_SCRIPT+="s|{{ ${key}_rgb }}|$color_rgb|g; "
+done
+
+apply_template() {
+  local template_file="$1"
+  local output_file="$2"
+  
+  if [[ ! -f "$template_file" ]]; then
+    return
+  fi
+  
+  # Ensure the directory exists for the output file
+  mkdir -p "$(dirname "$output_file")"
+  
+  # Apply all color replacements in a single sed pass
+  sed -e "$SED_SCRIPT" "$template_file" > "$output_file"
+  
+  echo "Updated $output_file"
+}
+
+# Mappings (Template -> Target)
+apply_template "$TEMPLATES_DIR/waybar.css.tpl" "$CONFIGS_DIR/waybar/theme.css"
+apply_template "$TEMPLATES_DIR/hyprland.conf.tpl" "$CONFIGS_DIR/hypr/theme.conf"
+apply_template "$TEMPLATES_DIR/hyprlock.conf.tpl" "$CONFIGS_DIR/hypr/hyprlock-theme.conf"
+apply_template "$TEMPLATES_DIR/swayosd.css.tpl" "$CONFIGS_DIR/swayosd/theme.css"
+apply_template "$TEMPLATES_DIR/alacritty.toml.tpl" "$CONFIGS_DIR/alacritty/theme.toml"
+apply_template "$TEMPLATES_DIR/btop.theme.tpl" "$CONFIGS_DIR/btop/btop.theme"
+apply_template "$TEMPLATES_DIR/fuzzel.ini.tpl" "$CONFIGS_DIR/fuzzel/fuzzel.ini"
+apply_template "$TEMPLATES_DIR/obsidian.css.tpl" "$CONFIGS_DIR/theme/obsidian.css"
+apply_template "$TEMPLATES_DIR/ghostty.conf.tpl" "$CONFIGS_DIR/theme/ghostty.conf"
+apply_template "$TEMPLATES_DIR/kitty.conf.tpl" "$CONFIGS_DIR/theme/kitty.conf"
+apply_template "$TEMPLATES_DIR/mako.ini.tpl" "$CONFIGS_DIR/theme/config"
+apply_template "$TEMPLATES_DIR/chromium.theme.tpl" "$CONFIGS_DIR/theme/chromium.theme"
+
+# After updating themes, we might need to tell apps to reload
+pkill -x 'waybar|\.waybar-wrapped' 2>/dev/null
+sleep 0.5 # Give it a moment to fully exit before spawning a new one
+hyprctl dispatch exec waybar >/dev/null 2>&1
+
+# Apply extra theme components (GNOME, Browser, VSCode)
+"$HOME/nixos-dotfiles/config/scripts/nix-theme-set-browser"
+"$HOME/nixos-dotfiles/config/scripts/nix-theme-set-gnome"
+"$HOME/nixos-dotfiles/config/scripts/nix-theme-set-vscode"
+
+# hyprland automatically picks up sourced file changes if configured.

@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+# Sets the specified image as the current background
+
+if [[ -z $1 ]]; then
+  echo "Usage: nix-theme-bg-set <path-to-image>" >&2
+  exit 1
+fi
+
+BACKGROUND="$1"
+# Cache directory for persistent state that is not git-tracked
+CURRENT_BACKGROUND_LINK="$HOME/.cache/current-background"
+
+# Ensure cache dir exists
+mkdir -p "$(dirname "$CURRENT_BACKGROUND_LINK")"
+
+# Create symlink to the new background
+ln -nsf "$BACKGROUND" "$CURRENT_BACKGROUND_LINK"
+
+pkill -x 'swaybg|\.swaybg-wrapped' 2>/dev/null
+sleep 0.2
+hyprctl dispatch exec "swaybg -i '$CURRENT_BACKGROUND_LINK' -m fill" >/dev/null 2>&1

@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+# A simple menu to select between switching themes and backgrounds
+
+CHOICE=$(echo -e "󱄄  Change Theme
+󰸉  Change Background
+⌨️  View Shortcuts" | fuzzel --dmenu -p "" --placeholder "Theming…")
+
+case "$CHOICE" in
+    *Theme*)
+        "$HOME/nixos-dotfiles/config/scripts/nix-theme-selector"
+        ;;
+    *Background*)
+        "$HOME/nixos-dotfiles/config/scripts/nix-background-selector"
+        ;;
+    *Shortcuts*)
+        "$HOME/nixos-dotfiles/config/scripts/nix-menu-keybindings"
+        ;;
+esac

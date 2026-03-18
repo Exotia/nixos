@@ -1,0 +1,85 @@
+@import "theme.css";
+
+* {
+  border: none;
+  border-radius: 0;
+  min-height: 0;
+  font-family: 'JetBrainsMono Nerd Font', 'Symbols Nerd Font';
+  font-size: 13px;
+}
+
+window#waybar {
+  background-color: @background;
+  color: @foreground;
+  transition-property: background-color;
+  transition-duration: .5s;
+}
+
+/* Base module styling for the "Pill" look */
+#workspaces,
+#clock,
+#custom-weather,
+#cpu,
+#memory,
+#network,
+#pulseaudio,
+#tray,
+#battery,
+#custom-notifications,
+#custom-power,
+#custom-menu,
+#window {
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 0 12px;
+    margin: 4px 2px;
+    border-radius: 8px;
+    border-bottom: 2px solid transparent;
+}
+
+/* Active indicator for some modules */
+#cpu, #memory, #battery, #pulseaudio {
+    border-bottom: 2px solid @accent;
+}
+
+#workspaces {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+#workspaces button {
+    padding: 0 4px;
+    color: alpha(@foreground, 0.4);
+}
+
+#workspaces button.active {
+    color: @accent;
+}
+
+#workspaces button.urgent {
+    color: @color1;
+}
+
+#custom-power {
+    color: @color1;
+    background-color: alpha(@color1, 0.1);
+}
+
+#custom-menu {
+    color: @accent;
+    font-size: 16px;
+    background-color: alpha(@accent, 0.1);
+}
+
+#window {
+    background-color: transparent;
+    font-style: italic;
+}
+
+#clock, #custom-weather {
+    background-color: alpha(@accent, 0.1);
+    color: @accent;
+    font-weight: bold;
+}
+
+#tray {
+    margin-right: 8px;
+}

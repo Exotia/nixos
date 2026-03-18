@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+# Select a theme from the available themes in config/themes/
+
+THEMES_DIR="$HOME/nixos-dotfiles/config/themes"
+
+if [[ ! -d $THEMES_DIR ]]; then
+  notify-send "Theming & UI" "No themes directory found at $THEMES_DIR"
+  exit 1
+fi
+
+# List available themes
+mapfile -t THEMES < <(find "$THEMES_DIR" -maxdepth 1 -mindepth 1 -type d -printf "%f
+" | sort)
+
+if (( ${#THEMES[@]} == 0 )); then
+  notify-send "Theming & UI" "No themes found in $THEMES_DIR"
+  exit 1
+fi
+
+# Show menu
+SELECTED=$(printf "%s
+" "${THEMES[@]}" | fuzzel --dmenu -p "" --placeholder "Select Theme…")
+
+if [[ -n $SELECTED ]]; then
+  # Call nix-theme-set
+  "$HOME/nixos-dotfiles/config/scripts/nix-theme-set" "$SELECTED"
+fi

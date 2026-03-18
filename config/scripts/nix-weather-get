@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Simple weather getter for Waybar using wttr.in
+WEATHER=$(curl -s "wttr.in/?format=1")
+if [[ $? -ne 0 || -z "$WEATHER" ]]; then
+    echo "{\"text\": \"N/A\", \"tooltip\": \"Weather unavailable\"}"
+else
+    WEATHER=$(echo "$WEATHER" | xargs)
+    echo "{\"text\": \"$WEATHER\", \"tooltip\": \"Current weather outside\"}"
+fi

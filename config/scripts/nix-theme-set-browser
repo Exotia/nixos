@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+CHROMIUM_THEME="$HOME/nixos-dotfiles/config/theme/chromium.theme"
+# This file will be symlinked to /etc/brave/policies/managed/color.json via configuration.nix
+BRAVE_POLICY_FILE="$HOME/nixos-dotfiles/config/theme/brave-policy.json"
+
+if command -v chromium >/dev/null 2>&1 || command -v brave >/dev/null 2>&1; then
+  if [[ -f "$CHROMIUM_THEME" ]]; then
+    THEME_RGB_COLOR=$(cat "$CHROMIUM_THEME")
+    THEME_HEX_COLOR=$(printf '#%02x%02x%02x' ${THEME_RGB_COLOR//,/ })
+  else
+    THEME_HEX_COLOR="#1c2027"
+  fi
+
+  # Generate the JSON policy locally
+  echo "{\"BrowserThemeColor\": \"$THEME_HEX_COLOR\"}" > "$BRAVE_POLICY_FILE"
+
+  # Trigger refresh (usually doesn't require sudo)
+  if command -v chromium >/dev/null 2>&1; then
+    chromium --refresh-platform-policy --no-startup-window >/dev/null 2>&1
+  fi
+  if command -v brave >/dev/null 2>&1; then
+    brave --refresh-platform-policy --no-startup-window >/dev/null 2>&1
+  fi
+fi

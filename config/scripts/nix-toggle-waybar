@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+if pgrep -x 'waybar|\.waybar-wrapped' >/dev/null; then
+  pkill -x 'waybar|\.waybar-wrapped' 2>/dev/null
+else
+  hyprctl dispatch exec waybar >/dev/null 2>&1
+fi
