@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Adjust brightness on the most likely display device.
 # Usage: nix-brightness-display <step>
@@ -18,4 +18,4 @@ done
 brightnessctl -d "$device" set "$step" >/dev/null
 
 # Use SwayOSD to display the new brightness setting.
-arch-swayosd-brightness "$(brightnessctl -d "$device" -m | cut -d',' -f4 | tr -d '%')"
+swayosd-client --brightness "$(brightnessctl -d "$device" -m | cut -d',' -f4 | tr -d '%')"

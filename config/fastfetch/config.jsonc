@@ -63,22 +63,9 @@
       "format": "\u001b[90m┌──────────────────────Software──────────────────────┐"
     },
     {
-      "type": "command",
+      "type": "os",
       "key": "\ue900 OS",
-      "keyColor": "blue",
-      "text": "version=$(nix-version); echo \"Omarchy $version\""
-    },
-    {
-      "type": "command",
-      "key": "│ ├󰘬",
-      "keyColor": "blue",
-      "text": "branch=$(nix-version-branch); echo \"$branch\""
-    },
-    {
-      "type": "command",
-      "key": "│ ├󰔫",
-      "keyColor": "blue",
-      "text": "channel=$(nix-version-channel); echo \"$channel\""
+      "keyColor": "blue"
     },
     {
       "type": "kernel",
@@ -141,12 +128,7 @@
       "key": "󱫐 Uptime",
       "keyColor": "magenta"
     },
-    {
-      "type": "command",
-      "key": " Update",
-      "keyColor": "magenta",
-      "text": "updated=$(nix-version-pkgs); echo \"$updated\""
-    },
+
     {
       "type": "custom",
       "format": "\u001b[90m└────────────────────────────────────────────────────┘"

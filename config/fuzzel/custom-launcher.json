@@ -1,0 +1,32 @@
+{
+  "aliases": {
+    "brave-browser.desktop": "brave",
+    "com.github.xeco23.WasIstLos.desktop": "WhatsApp",
+    "Alacritty.desktop": "Terminal",
+    "LocalSend.desktop": "LocalSend",
+    "github.desktop": "GitHub",
+    "steam.desktop": "Steam",
+    "spotify.desktop": "Spotify",
+    "pcmanfm.desktop": "Explorer"
+  },
+  "icons": {
+    "Alacritty.desktop": "./icons/terminal.svg"
+  },
+  "defaults": [
+    "brave-browser.desktop",
+    "com.github.xeco23.WasIstLos.desktop",
+    "Alacritty.desktop",
+    "obsidian.desktop",
+    "LocalSend.desktop",
+    "github.desktop",
+    "steam.desktop",
+    "spotify.desktop",
+    "pcmanfm.desktop"
+  ],
+  "hidden": [
+    "btop.desktop",
+    "imv.desktop",
+    "imv-dir.desktop",
+    "nm-connection-editor.desktop"
+  ]
+}

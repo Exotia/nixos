@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Launches Google Calendar in Brave as a standalone app
+uwsm-app -- brave --app=https://calendar.google.com

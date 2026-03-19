@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Returns the current working directory of the active terminal window,
 # so a new terminal window can be started in the same directory.

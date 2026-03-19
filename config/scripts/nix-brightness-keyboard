@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Adjust keyboard backlight brightness using available steps.
 # Usage: nix-brightness-keyboard <up|down|cycle>
@@ -39,4 +39,4 @@ brightnessctl -d "$device" set "$new_brightness" >/dev/null
 
 # Use SwayOSD to display the new brightness setting.
 percent=$((new_brightness * 100 / max_brightness))
-arch-swayosd-kbd-brightness "$percent"
+swayosd-client --key-backlight "$percent"

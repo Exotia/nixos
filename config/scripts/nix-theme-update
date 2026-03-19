@@ -1,0 +1,127 @@
+#!/usr/bin/env bash
+
+# Applies colors from ~/nixos-dotfiles/config/theme/colors.toml to all .tpl files
+# and saves the results to the appropriate config paths.
+
+COLORS_FILE="$HOME/nixos-dotfiles/config/theme/colors.toml"
+TEMPLATES_DIR="$HOME/nixos-dotfiles/config/default/themed"
+CONFIGS_DIR="$HOME/nixos-dotfiles/config"
+
+if [[ ! -f $COLORS_FILE ]]; then
+  echo "Error: $COLORS_FILE not found." >&2
+  exit 1
+fi
+
+# Function to get a color from colors.toml
+get_color() {
+  local key="$1"
+  grep "^$key =" "$COLORS_FILE" | head -1 | cut -d'"' -f2
+}
+
+# Function to get a color and strip the # prefix
+get_color_stripped() {
+  get_color "$1" | sed 's/#//'
+}
+
+# Function to get color in R, G, B format
+get_color_rgb() {
+  local hex
+  hex=$(get_color_stripped "$1")
+  if [[ ${#hex} -ne 6 ]]; then
+    echo "0, 0, 0"
+    return
+  fi
+  local r=$((16#${hex:0:2}))
+  local g=$((16#${hex:2:2}))
+  local b=$((16#${hex:4:2}))
+  echo "$r, $g, $b"
+}
+
+KEYS=$(grep "=" "$COLORS_FILE" | cut -d' ' -f1)
+
+SED_SCRIPT=""
+for key in $KEYS; do
+  color=$(get_color "$key")
+  color_stripped=$(get_color_stripped "$key")
+  color_rgb=$(get_color_rgb "$key")
+  
+  SED_SCRIPT+="s|{{ $key }}|$color|g; "
+  SED_SCRIPT+="s|{{ ${key}_strip }}|$color_stripped|g; "
+  SED_SCRIPT+="s|{{ ${key}_rgb }}|$color_rgb|g; "
+done
+
+apply_template() {
+  local template_file="$1"
+  local output_file="$2"
+  
+  if [[ ! -f "$template_file" ]]; then
+    return
+  fi
+  
+  mkdir -p "$(dirname "$output_file")"
+  sed -e "$SED_SCRIPT" "$template_file" > "$output_file"
+  echo "Updated $output_file"
+}
+
+# Mappings (Template -> Target)
+apply_template "$TEMPLATES_DIR/waybar.css.tpl" "$CONFIGS_DIR/waybar/theme.css"
+apply_template "$TEMPLATES_DIR/hyprland.conf.tpl" "$CONFIGS_DIR/hypr/theme.conf"
+apply_template "$TEMPLATES_DIR/hyprlock.conf.tpl" "$CONFIGS_DIR/hypr/hyprlock-theme.conf"
+apply_template "$TEMPLATES_DIR/swayosd.css.tpl" "$CONFIGS_DIR/swayosd/theme.css"
+apply_template "$TEMPLATES_DIR/alacritty.toml.tpl" "$CONFIGS_DIR/alacritty/theme.toml"
+apply_template "$TEMPLATES_DIR/btop.theme.tpl" "$CONFIGS_DIR/btop/btop.theme"
+apply_template "$TEMPLATES_DIR/fuzzel.ini.tpl" "$CONFIGS_DIR/fuzzel/fuzzel.ini"
+apply_template "$TEMPLATES_DIR/obsidian.css.tpl" "$CONFIGS_DIR/theme/obsidian.css"
+apply_template "$TEMPLATES_DIR/ghostty.conf.tpl" "$CONFIGS_DIR/theme/ghostty.conf"
+apply_template "$TEMPLATES_DIR/kitty.conf.tpl" "$CONFIGS_DIR/theme/kitty.conf"
+apply_template "$TEMPLATES_DIR/mako.ini.tpl" "$CONFIGS_DIR/theme/config"
+apply_template "$TEMPLATES_DIR/chromium.theme.tpl" "$CONFIGS_DIR/theme/chromium.theme"
+
+# --- RELOAD COMPONENTS ---
+pkill -x 'waybar|\.waybar-wrapped' 2>/dev/null
+sleep 0.5
+hyprctl dispatch exec waybar >/dev/null 2>&1
+
+# --- GNOME THEMING ---
+if [[ -f "$HOME/nixos-dotfiles/config/theme/light.mode" ]]; then
+  gsettings set org.gnome.desktop.interface color-scheme "prefer-light"
+  gsettings set org.gnome.desktop.interface gtk-theme "Adwaita"
+else
+  gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"
+  gsettings set org.gnome.desktop.interface gtk-theme "Adwaita-dark"
+fi
+GNOME_ICONS_THEME="$HOME/nixos-dotfiles/config/theme/icons.theme"
+if [[ -f "$GNOME_ICONS_THEME" ]]; then
+  gsettings set org.gnome.desktop.interface icon-theme "$(cat "$GNOME_ICONS_THEME")"
+fi
+
+# --- BRAVE/CHROMIUM THEMING ---
+BRAVE_POLICY_FILE="$HOME/nixos-dotfiles/config/theme/brave-policy.json"
+CHROMIUM_THEME="$HOME/nixos-dotfiles/config/theme/chromium.theme"
+if [[ -f "$CHROMIUM_THEME" ]]; then
+  THEME_RGB_COLOR=$(cat "$CHROMIUM_THEME")
+  THEME_HEX_COLOR=$(printf '#%02x%02x%02x' ${THEME_RGB_COLOR//,/ })
+  echo "{\"BrowserThemeColor\": \"$THEME_HEX_COLOR\"}" > "$BRAVE_POLICY_FILE"
+  brave --refresh-platform-policy --no-startup-window >/dev/null 2>&1 || true
+fi
+
+# --- VSCODE THEMING ---
+VS_CODE_THEME="$HOME/nixos-dotfiles/config/theme/vscode.json"
+set_vscode_theme() {
+  local editor_cmd="$1"
+  local settings_path="$2"
+  command -v "$editor_cmd" >/dev/null 2>&1 || return 0
+  if [[ -f $VS_CODE_THEME ]]; then
+    theme_name=$(jq -r '.name' "$VS_CODE_THEME")
+    extension=$(jq -r '.extension' "$VS_CODE_THEME")
+    mkdir -p "$(dirname "$settings_path")"
+    [[ -f $settings_path ]] || printf '{\n}\n' >"$settings_path"
+    if ! grep -q '"workbench.colorTheme"' "$settings_path"; then
+      sed -i --follow-symlinks -E '0,/\{/{s/\{/{\ "workbench.colorTheme": "",/}' "$settings_path"
+    fi
+    sed -i --follow-symlinks -E "s/(\"workbench.colorTheme\"[[:space:]]*:[[:space:]]*\")[^\"]*(\")/\1$theme_name\2/" "$settings_path"
+  fi
+}
+set_vscode_theme "code" "$HOME/.config/Code/User/settings.json"
+set_vscode_theme "codium" "$HOME/.config/VSCodium/User/settings.json"
+set_vscode_theme "cursor" "$HOME/.config/Cursor/User/settings.json"

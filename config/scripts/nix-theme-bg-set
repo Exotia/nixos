@@ -1,18 +1,22 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Sets the specified image as the current background
 
 if [[ -z $1 ]]; then
-  echo "Usage: arch-theme-bg-set <path-to-image>" >&2
+  echo "Usage: nix-theme-bg-set <path-to-image>" >&2
   exit 1
 fi
 
 BACKGROUND="$1"
-CURRENT_BACKGROUND_LINK="$HOME/.config/arch/current/background"
+# Cache directory for persistent state that is not git-tracked
+CURRENT_BACKGROUND_LINK="$HOME/.cache/current-background"
+
+# Ensure cache dir exists
+mkdir -p "$(dirname "$CURRENT_BACKGROUND_LINK")"
 
 # Create symlink to the new background
 ln -nsf "$BACKGROUND" "$CURRENT_BACKGROUND_LINK"
 
-# Kill existing swaybg and start new one
-pkill -x swaybg
-setsid uwsm-app -- swaybg -i "$CURRENT_BACKGROUND_LINK" -m fill >/dev/null 2>&1 &
+pkill -x 'swaybg|\.swaybg-wrapped' 2>/dev/null
+sleep 0.2
+hyprctl dispatch exec "swaybg -i '$CURRENT_BACKGROUND_LINK' -m fill" >/dev/null 2>&1

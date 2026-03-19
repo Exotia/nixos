@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+# Select a background from the current theme using fuzzel
+
+BACKGROUNDS_DIR="$HOME/nixos-dotfiles/config/theme/backgrounds"
+
+if [[ ! -d $BACKGROUNDS_DIR ]]; then
+  notify-send "Theming & UI" "No theme backgrounds directory found at $BACKGROUNDS_DIR"
+  exit 1
+fi
+
+# List available backgrounds
+# We only want the filenames for the menu
+mapfile -t BACKGROUNDS < <(find "$BACKGROUNDS_DIR" -maxdepth 1 -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" -o -iname "*.webp" \) -printf "%f
+" | sort)
+
+if (( ${#BACKGROUNDS[@]} == 0 )); then
+  notify-send "Theming & UI" "No backgrounds found in $BACKGROUNDS_DIR"
+  exit 1
+fi
+
+# Show menu
+SELECTED=$(printf "%s
+" "${BACKGROUNDS[@]}" | fuzzel --dmenu -p "" --placeholder "Select Background…")
+
+if [[ -n $SELECTED ]]; then
+  # Call nix-theme-bg-set with full path
+  "$HOME/nixos-dotfiles/config/scripts/nix-theme-bg-set" "$BACKGROUNDS_DIR/$SELECTED"
+fi

@@ -1,0 +1,6 @@
+include=~/.config/default/mako/core.ini
+
+text-color=#edecee
+border-color=#a277ff
+background-color=#15141be6
+progress-color=source #a277ff

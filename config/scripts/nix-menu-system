@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+# A simple system menu for lock, logout, reboot, shutdown
+
+CHOICE=$(echo -e "󰌾  Lock
+󰍃  Logout
+󰜉  Reboot
+⏻  Shutdown" | fuzzel --dmenu -p "" --placeholder "System…")
+
+case "$CHOICE" in
+    *Lock*)
+        "$HOME/nixos-dotfiles/config/scripts/nix-lock-screen"
+        ;;
+    *Logout*)
+        hyprctl dispatch exit
+        ;;
+    *Reboot*)
+        systemctl reboot
+        ;;
+    *Shutdown*)
+        systemctl poweroff
+        ;;
+esac

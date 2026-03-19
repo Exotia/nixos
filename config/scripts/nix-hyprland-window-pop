@@ -1,9 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Toggle to pop-out a tile to stay fixed on a display basis.
 
 # Usage:
-# arch-hyprland-window-pop [width height [x y]]
+# nix-hyprland-window-pop [width height [x y]]
 #
 # Arguments:
 #   width   Optional. Width of the floating window. Default: 1300
