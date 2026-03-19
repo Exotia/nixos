@@ -1,18 +1,20 @@
 @import "theme.css";
 
+/* Reset all styles */
 * {
-  border: none;
-  border-radius: 0;
-  min-height: 0;
-  font-family: 'JetBrainsMono Nerd Font', 'Symbols Nerd Font';
-  font-size: 13px;
+    border: none;
+    border-radius: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    font-family: 'JetBrainsMono Nerd Font', 'Symbols Nerd Font';
+    font-size: 13px;
 }
 
+/* Make the main bar transparent */
 window#waybar {
-  background-color: @background;
-  color: @foreground;
-  transition-property: background-color;
-  transition-duration: .5s;
+    background: transparent;
+    color: @foreground;
 }
 
 /* Base module styling for the "Pill" look */
@@ -29,57 +31,88 @@ window#waybar {
 #custom-power,
 #custom-menu,
 #window {
-    background-color: rgba(255, 255, 255, 0.05);
-    padding: 0 12px;
-    margin: 4px 2px;
-    border-radius: 8px;
-    border-bottom: 2px solid transparent;
+    background-color: @background; /* Use theme background */
+    padding: 2px 12px;
+    margin: 6px 4px; /* Space around the pills to make them float */
+    border-radius: 12px;
+    /* Optional: subtle border */
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Active indicator for some modules */
-#cpu, #memory, #battery, #pulseaudio {
-    border-bottom: 2px solid @accent;
+/* Remove background from specific modules to group them if needed */
+#window {
+    background: transparent;
+    border: none;
+    font-style: italic;
+    color: alpha(@foreground, 0.7);
 }
 
+/* Special styling for Workspace pill */
 #workspaces {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: @background;
 }
 
 #workspaces button {
-    padding: 0 4px;
-    color: alpha(@foreground, 0.4);
+    padding: 0 6px;
+    color: alpha(@foreground, 0.3);
+    transition: all 0.3s ease;
 }
 
 #workspaces button.active {
     color: @accent;
+    font-weight: bold;
 }
 
-#workspaces button.urgent {
-    color: @color1;
+#workspaces button:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: @foreground;
 }
 
+/* Special styling for Center (Clock/Weather) pill */
+#clock, #custom-weather {
+    background-color: alpha(@accent, 0.1);
+    color: @accent;
+    font-weight: bold;
+    border: 1px solid alpha(@accent, 0.2);
+}
+
+/* Power & Menu buttons */
 #custom-power {
     color: @color1;
     background-color: alpha(@color1, 0.1);
+    margin-right: 10px;
 }
 
 #custom-menu {
     color: @accent;
     font-size: 16px;
     background-color: alpha(@accent, 0.1);
+    margin-left: 10px;
 }
 
-#window {
-    background-color: transparent;
-    font-style: italic;
+/* Status modules indicator */
+#cpu, #memory, #battery, #pulseaudio, #network {
+    background-color: @background;
 }
 
-#clock, #custom-weather {
-    background-color: alpha(@accent, 0.1);
+#pulseaudio {
     color: @accent;
-    font-weight: bold;
 }
 
-#tray {
-    margin-right: 8px;
+#battery.charging {
+    color: #a6e3a1; /* Greenish */
+}
+
+#battery.warning {
+    color: #fab387; /* Orange */
+}
+
+#battery.critical {
+    color: #f38ba8; /* Red */
+}
+
+/* Remove margins between adjacent modules to make them look like one block if they are next to each other */
+.modules-right > widget > label {
+    margin-left: 0;
+    margin-right: 0;
 }

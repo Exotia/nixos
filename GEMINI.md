@@ -2,6 +2,21 @@
 
 This file contains critical information about the project's architecture, recent fixes, and ongoing maintenance for the NixOS-based Hyprland setup.
 
+## 🛠 Recent Critical Fixes (March 19, 2026)
+
+### 1. Multimedia & Default Applications
+- **VLC Integration:** Added VLC as the primary media player.
+- **Default Video Handler:** Configured `xdg.mimeApps` to set VLC as the default application for all major video formats (MP4, MKV, WebM, AVI, etc.), ensuring consistent behavior across the desktop environment.
+
+### 2. Enhanced Bluetooth Support
+- **System-level Enablement:** Enabled Bluetooth hardware support and the `blueman` system service in `configuration.nix`.
+- **User Tools:** Added `bluez-tools` for CLI management and `blueman` for a graphical interface.
+- **Auto-Tray Integration:** Added `blueman-applet` to `config/hypr/autostart.conf` to ensure immediate access to Bluetooth settings from the Waybar tray.
+
+### 3. Simplified Network Management
+- **Easy WiFi Access:** Created a `wifi` shell alias for `nmtui` (Network Manager TUI), providing a user-friendly terminal interface for managing connections.
+- **Existing Applet:** Confirmed `nm-applet` remains the primary background handler for status bar connectivity indicators.
+
 ## 🛠 Recent Critical Fixes (March 18, 2026)
 
 ### 1. Custom App Launcher Reliability & Favorites Sync

@@ -29,6 +29,10 @@
   # Display Manager (The login screen)
   services.displayManager.ly.enable = true; # Ly is a fast, lightweight terminal-based display manager
 
+  # Bluetooth
+  hardware.bluetooth.enable = true; # Enables Bluetooth hardware support
+  services.blueman.enable = true; # Provides a nice GUI for managing Bluetooth connections
+
   # Power Management
   services.power-profiles-daemon.enable = true; # Manages power profiles (performance, balanced, power-saver) to save battery
 

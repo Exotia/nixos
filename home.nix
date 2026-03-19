@@ -52,6 +52,7 @@ programs.bash = {
     btw = "echo i use hyprland btw";
     nrs = "sudo nixos-rebuild switch --flake ~/nixos-dotfiles#nixos"; # The main alias for applying system updates
     vim = "nvim";
+    wifi = "nmtui"; # Easy terminal-based WiFi management
     lookup = "find /etc/profiles/per-user/ole/share/applications /run/current-system/sw/share/applications ~/.local/share/applications";
   };
   initExtra = ''
@@ -100,6 +101,8 @@ home.packages = with pkgs; [
   gsettings-desktop-schemas # Standard schemas for GTK applications
   dconf           # Configuration backend system for GNOME/GTK apps (themes, fonts, etc.)
   networkmanagerapplet # GUI applet for managing network connections (nm-applet in Waybar)
+  bluez-tools     # Bluetooth command-line tools (bt-device, bt-adapter, etc.)
+  blueman         # Graphical bluetooth manager (blueman-manager, blueman-applet)
   xdg-utils       # Tools for standard desktop operations (like xdg-open)
   shared-mime-info # Database of file types (helps apps know what program should open a specific file)
   brightnessctl   # Tool to control laptop backlight brightness
@@ -109,11 +112,11 @@ home.packages = with pkgs; [
   # --- Graphical Applications ---
   pcmanfm         # Lightweight file manager
   localsend       # Tool for sharing files over local network securely
-  gnome-calculator# Standard calculator
   rink            # Advanced unit conversion tool/calculator
   brave           # Privacy-focused web browser
   imv             # Minimalist image viewer
   mpv             # Lightweight, highly capable media player
+  vlc             # Feature-rich media player (set as default for video)
   vesktop         # Custom Discord client (supports screen sharing on Wayland and Vencord plugins)
   wasistlos       # Unofficial WhatsApp client
   obsidian        # Markdown-based note-taking application
@@ -159,6 +162,23 @@ xdg.desktopEntries = {
     icon = "youtube";
     terminal = false;
     categories = [ "Video" ];
+  };
+};
+
+# Set default applications for specific file types (MIME types)
+xdg.mimeApps = {
+  enable = true;
+  defaultApplications = {
+    "video/mp4" = [ "vlc.desktop" ];
+    "video/mpeg" = [ "vlc.desktop" ];
+    "video/ogg" = [ "vlc.desktop" ];
+    "video/quicktime" = [ "vlc.desktop" ];
+    "video/webm" = [ "vlc.desktop" ];
+    "video/x-matroska" = [ "vlc.desktop" ];
+    "video/x-ms-wmv" = [ "vlc.desktop" ];
+    "video/x-flv" = [ "vlc.desktop" ];
+    "video/x-msvideo" = [ "vlc.desktop" ];
+    "video/avi" = [ "vlc.desktop" ];
   };
 };
 

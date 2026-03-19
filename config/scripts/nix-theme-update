@@ -15,7 +15,6 @@ fi
 # Function to get a color from colors.toml
 get_color() {
   local key="$1"
-  # Simple grep/sed to extract value from toml
   grep "^$key =" "$COLORS_FILE" | head -1 | cut -d'"' -f2
 }
 
@@ -38,11 +37,8 @@ get_color_rgb() {
   echo "$r, $g, $b"
 }
 
-# Create a list of all color keys
-# Get keys from the file (everything before the =)
 KEYS=$(grep "=" "$COLORS_FILE" | cut -d' ' -f1)
 
-# Pre-compute a single sed script for all colors to dramatically improve performance
 SED_SCRIPT=""
 for key in $KEYS; do
   color=$(get_color "$key")
@@ -62,12 +58,8 @@ apply_template() {
     return
   fi
   
-  # Ensure the directory exists for the output file
   mkdir -p "$(dirname "$output_file")"
-  
-  # Apply all color replacements in a single sed pass
   sed -e "$SED_SCRIPT" "$template_file" > "$output_file"
-  
   echo "Updated $output_file"
 }
 
@@ -85,14 +77,51 @@ apply_template "$TEMPLATES_DIR/kitty.conf.tpl" "$CONFIGS_DIR/theme/kitty.conf"
 apply_template "$TEMPLATES_DIR/mako.ini.tpl" "$CONFIGS_DIR/theme/config"
 apply_template "$TEMPLATES_DIR/chromium.theme.tpl" "$CONFIGS_DIR/theme/chromium.theme"
 
-# After updating themes, we might need to tell apps to reload
+# --- RELOAD COMPONENTS ---
 pkill -x 'waybar|\.waybar-wrapped' 2>/dev/null
-sleep 0.5 # Give it a moment to fully exit before spawning a new one
+sleep 0.5
 hyprctl dispatch exec waybar >/dev/null 2>&1
 
-# Apply extra theme components (GNOME, Browser, VSCode)
-"$HOME/nixos-dotfiles/config/scripts/nix-theme-set-browser"
-"$HOME/nixos-dotfiles/config/scripts/nix-theme-set-gnome"
-"$HOME/nixos-dotfiles/config/scripts/nix-theme-set-vscode"
+# --- GNOME THEMING ---
+if [[ -f "$HOME/nixos-dotfiles/config/theme/light.mode" ]]; then
+  gsettings set org.gnome.desktop.interface color-scheme "prefer-light"
+  gsettings set org.gnome.desktop.interface gtk-theme "Adwaita"
+else
+  gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"
+  gsettings set org.gnome.desktop.interface gtk-theme "Adwaita-dark"
+fi
+GNOME_ICONS_THEME="$HOME/nixos-dotfiles/config/theme/icons.theme"
+if [[ -f "$GNOME_ICONS_THEME" ]]; then
+  gsettings set org.gnome.desktop.interface icon-theme "$(cat "$GNOME_ICONS_THEME")"
+fi
 
-# hyprland automatically picks up sourced file changes if configured.
+# --- BRAVE/CHROMIUM THEMING ---
+BRAVE_POLICY_FILE="$HOME/nixos-dotfiles/config/theme/brave-policy.json"
+CHROMIUM_THEME="$HOME/nixos-dotfiles/config/theme/chromium.theme"
+if [[ -f "$CHROMIUM_THEME" ]]; then
+  THEME_RGB_COLOR=$(cat "$CHROMIUM_THEME")
+  THEME_HEX_COLOR=$(printf '#%02x%02x%02x' ${THEME_RGB_COLOR//,/ })
+  echo "{\"BrowserThemeColor\": \"$THEME_HEX_COLOR\"}" > "$BRAVE_POLICY_FILE"
+  brave --refresh-platform-policy --no-startup-window >/dev/null 2>&1 || true
+fi
+
+# --- VSCODE THEMING ---
+VS_CODE_THEME="$HOME/nixos-dotfiles/config/theme/vscode.json"
+set_vscode_theme() {
+  local editor_cmd="$1"
+  local settings_path="$2"
+  command -v "$editor_cmd" >/dev/null 2>&1 || return 0
+  if [[ -f $VS_CODE_THEME ]]; then
+    theme_name=$(jq -r '.name' "$VS_CODE_THEME")
+    extension=$(jq -r '.extension' "$VS_CODE_THEME")
+    mkdir -p "$(dirname "$settings_path")"
+    [[ -f $settings_path ]] || printf '{\n}\n' >"$settings_path"
+    if ! grep -q '"workbench.colorTheme"' "$settings_path"; then
+      sed -i --follow-symlinks -E '0,/\{/{s/\{/{\ "workbench.colorTheme": "",/}' "$settings_path"
+    fi
+    sed -i --follow-symlinks -E "s/(\"workbench.colorTheme\"[[:space:]]*:[[:space:]]*\")[^\"]*(\")/\1$theme_name\2/" "$settings_path"
+  fi
+}
+set_vscode_theme "code" "$HOME/.config/Code/User/settings.json"
+set_vscode_theme "codium" "$HOME/.config/VSCodium/User/settings.json"
+set_vscode_theme "cursor" "$HOME/.config/Cursor/User/settings.json"
