@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Restart an application by killing it and relaunching via uwsm.
 # Usage: nix-restart-app <application-name> [application-args...]

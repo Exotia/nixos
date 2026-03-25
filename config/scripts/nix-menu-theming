@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
 
-# A simple menu to select between switching themes and backgrounds
+# A menu for theming, shortcuts, and system power actions
 
 CHOICE=$(echo -e "󱄄  Change Theme
 󰸉  Change Background
-⌨️  View Shortcuts" | fuzzel --dmenu -p "" --placeholder "Theming…")
+⌨️  View Shortcuts
+󰌾  Lock
+󰍃  Logout
+󰜉  Reboot
+⏻  Shutdown" | fuzzel --dmenu -p "" --placeholder "System & Theming…")
 
 case "$CHOICE" in
     *Theme*)
@@ -15,5 +19,17 @@ case "$CHOICE" in
         ;;
     *Shortcuts*)
         "$HOME/nixos-dotfiles/config/scripts/nix-menu-keybindings"
+        ;;
+    *Lock*)
+        "$HOME/nixos-dotfiles/config/scripts/nix-lock-screen"
+        ;;
+    *Logout*)
+        hyprctl dispatch exit
+        ;;
+    *Reboot*)
+        systemctl reboot
+        ;;
+    *Shutdown*)
+        systemctl poweroff
         ;;
 esac

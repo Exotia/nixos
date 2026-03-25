@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 echo "Updating NixOS system..."
 sudo nixos-rebuild switch --flake ~/nixos-dotfiles#nixos
 echo "Update complete. Press any key to exit."

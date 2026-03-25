@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Launch the default editor as determined by $EDITOR (set via ~/.config/uwsm/default) (or nvim if missing).
 # Starts suitable editors in a terminal window and otherwise as a regular application.

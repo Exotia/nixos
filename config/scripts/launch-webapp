@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Launch the passed in URL as a web app in the default browser (or chromium if the default doesn't support --app).
 
@@ -9,4 +9,45 @@ google-chrome* | brave-browser* | microsoft-edge* | opera* | vivaldi* | helium*)
 *) browser="chromium.desktop" ;;
 esac
 
-exec setsid uwsm-app -- $(sed -n 's/^Exec=\([^ ]*\).*/\1/p' {~/.local,~/.nix-profile,/usr}/share/applications/$browser 2>/dev/null | head -1) --app="$1" "${@:2}"
+# Find the desktop file in XDG_DATA_DIRS
+desktop_file=""
+IFS=':' read -ra DIRS <<< "$XDG_DATA_DIRS"
+for dir in "${DIRS[@]}"; do
+    if [[ -f "$dir/applications/$browser" ]]; then
+        desktop_file="$dir/applications/$browser"
+        break
+    fi
+done
+
+# Fallback to hardcoded common paths if XDG_DATA_DIRS is empty or doesn't yield the file
+if [[ -z "$desktop_file" ]]; then
+    for dir in ~/.local/share/applications ~/.nix-profile/share/applications /usr/share/applications /etc/profiles/per-user/$USER/share/applications /run/current-system/sw/share/applications; do
+        if [[ -f "$dir/$browser" ]]; then
+            desktop_file="$dir/$browser"
+            break
+        fi
+    done
+fi
+
+if [[ -z "$desktop_file" ]]; then
+    echo "Error: Could not find desktop file for $browser" >&2
+    exit 1
+fi
+
+# Extract the executable from the desktop file.
+# We want the command without any % arguments.
+cmd=$(grep '^Exec=' "$desktop_file" | head -1 | sed 's/^Exec=//;s/ %[fFuUikInNvV]//g')
+
+# Create a unique profile directory for the web app to ensure flags like dark mode work correctly
+# and to keep it isolated from the main browser session.
+app_name=$(echo "$1" | sed 's|https\?://||;s|/.*||;s|\.||g')
+profile_dir="$HOME/.cache/webapps/$app_name"
+mkdir -p "$profile_dir"
+
+# Use uwsm-app to launch the command with the --app argument.
+# We also append flags that force the web content to prefer dark mode if available.
+exec setsid uwsm-app -- $cmd --app="$1" --user-data-dir="$profile_dir" \
+    --force-dark-mode \
+    --enable-features=WebUIDarkMode \
+    --blink-settings=primaryHoverType=2,primaryPointerType=4 \
+    "${@:2}"

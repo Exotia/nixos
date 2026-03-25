@@ -12,13 +12,45 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  # Load nvidia driver for Xorg and Wayland
+  services.xserver.videoDrivers = ["nvidia"];
+
+  hardware.graphics.enable = true;
+
+  hardware.nvidia = {
+    # Modesetting is required.
+    modesetting.enable = true;
+
+    # Nvidia power management. Experimental, and can cause sleep/suspend to fail.
+    # Enable this if you have graphical corruption issues or application crashes after waking
+    # up from sleep. This fixes it by saving the entire VRAM memory to /tmp/ instead 
+    # of just the bare essentials.
+    powerManagement.enable = false;
+
+    # Fine-grained power management. Turns off GPU when not in use.
+    # Experimental and only works on modern Nvidia GPUs (Turing or newer).
+    powerManagement.finegrained = false;
+
+    # Use the NVidia open source kernel module (not to be confused with the
+    # linux-nouveau open source driver).
+    # This is currently only available on target hosts with Turing or newer GPUs.
+    open = false;
+
+    # Enable the Nvidia settings menu,
+    # accessible via `nvidia-settings`.
+    nvidiaSettings = true;
+
+    # Optionally, you may need to select the appropriate driver version for your specific GPU.
+    package = config.boot.kernelPackages.nvidiaPackages.stable;
+  };
+
   # --- Networking ---
   networking.hostName = "nixos";
   networking.networkmanager.enable = true; # Enables NetworkManager for easy WiFi/Ethernet configuration
 
   # --- Localization ---
   # Timezone and Locale settings
-  time.timeZone = "Europa/Berlin";
+  time.timeZone = "Europe/Berlin";
   i18n.defaultLocale = "de_DE.UTF-8";
   console.keyMap = "de";
   
@@ -36,12 +68,28 @@
   # Power Management
   services.power-profiles-daemon.enable = true; # Manages power profiles (performance, balanced, power-saver) to save battery
 
+  # PipeWire Audio
+  security.rtkit.enable = true;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+  };
+
   # --- Desktop Environment ---
   # Window Manager / Desktop Environment setup
   programs.hyprland = {
     enable = true; # Enables the Hyprland Wayland compositor
     xwayland.enable = true; # Enables XWayland to support legacy X11 applications that aren't native to Wayland yet
     withUWSM = true; # Uses Universal Wayland Session Manager for proper process and environment variable management
+  };
+
+  # XDG Portals (crucial for theme detection, file picking, etc. on Wayland)
+  xdg.portal = {
+    enable = true;
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+    config.common.default = [ "hyprland" "gtk" ];
   };
 
   # --- Programs ---
@@ -62,6 +110,7 @@
     vim # Basic text editor
     wget # Network downloader
     git # Version control
+    gcc
     gemini-cli # Gemini AI CLI tool
   ];
 

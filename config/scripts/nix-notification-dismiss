@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Dismiss a mako notification on the basis of its summary. Used by the first-run notifications to dismiss them after clicking for action.
 
