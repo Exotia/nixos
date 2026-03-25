@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Returns a formatted battery status string with percentage and power draw/charge.
 # Used by the battery notification hotkey (Ctrl + Shift + Super + B).

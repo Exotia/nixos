@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Returns true if all the commands passed in as arguments exit on the system.
 

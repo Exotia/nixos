@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Change gnome modes
 if [[ -f ~/.config/arch/current/theme/light.mode ]]; then

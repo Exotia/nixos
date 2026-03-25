@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 CHROMIUM_THEME=~/.config/arch/current/theme/chromium.theme
 

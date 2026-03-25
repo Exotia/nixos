@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Finish the installation of Omarchy with items that can only be done after logging in.
 

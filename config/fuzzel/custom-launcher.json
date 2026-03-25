@@ -7,7 +7,8 @@
     "github.desktop": "GitHub",
     "steam.desktop": "Steam",
     "spotify.desktop": "Spotify",
-    "pcmanfm.desktop": "Explorer"
+    "pcmanfm.desktop": "Explorer",
+    "vesktop.desktop": "Discord"
   },
   "icons": {
     "Alacritty.desktop": "./icons/terminal.svg"
@@ -21,7 +22,8 @@
     "github.desktop",
     "steam.desktop",
     "spotify.desktop",
-    "pcmanfm.desktop"
+    "pcmanfm.desktop",
+    "vesktop.desktop"
   ],
   "hidden": [
     "btop.desktop",

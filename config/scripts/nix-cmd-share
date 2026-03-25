@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Share clipboard, file, or folder using LocalSend. Bound to Super + Ctrl + S by default.
 

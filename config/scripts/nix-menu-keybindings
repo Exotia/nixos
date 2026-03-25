@@ -1,113 +1,76 @@
 #!/usr/bin/env bash
 
-# Displays Hyprland application shortcuts in a Fuzzel menu.
-# Filters for app launchers only and provides concise descriptions.
+# Displays a comprehensive list of Hyprland keyboard shortcuts in a Fuzzel menu.
 
-BINDINGS_FILES=(
-    "/home/ole/nixos-dotfiles/config/hypr/bindings.conf"
-    "/home/ole/nixos-dotfiles/config/default/hypr/bindings/clipboard.conf"
-    "/home/ole/nixos-dotfiles/config/default/hypr/bindings/media.conf"
-    "/home/ole/nixos-dotfiles/config/default/hypr/bindings/tiling-v2.conf"
-    "/home/ole/nixos-dotfiles/config/default/hypr/bindings/utilities.conf"
-)
+LIST="🚀 APPLICATION LAUNCHERS
+SUPER + SPACE       ➜  Favorites menu
+SUPER + A           ➜  App Launcher
+SUPER + RETURN      ➜  Terminal (at current directory)
+SUPER + T           ➜  Terminal
+SUPER + SHIFT + RET ➜  Brave Browser
+SUPER + ALT + RET   ➜  Brave Browser (Incognito)
+SUPER + F           ➜  File Manager (PCManFM)
+SUPER + ALT + F     ➜  File Manager (at terminal dir)
+SUPER + S           ➜  Launch or Focus Spotify
+SUPER + O           ➜  Launch or Focus Obsidian
+SUPER + Y           ➜  YouTube (Web App)
 
-# Use awk to parse, filter for apps, and format the bindings
-FORMATTED=$(awk '
-    # Track the latest comment as a potential description
-    /^# / { 
-        c = substr($0, 3);
-        gsub(/^[ \t]+|[ \t]+$/, "", c);
-        if (c !~ /Add extra bindings|Application bindings|If your web app url/) {
-            last_comment = c;
-        }
-    }
+🪟 WINDOW MANAGEMENT
+SUPER + W           ➜  Close active window
+CTRL + ALT + DEL    ➜  Close all windows
+SUPER + ARROWS      ➜  Move focus
+ALT + TAB           ➜  Cycle applications
+SUPER + SHIFT + T   ➜  Toggle Floating
+SUPER + SHIFT + F   ➜  Toggle Fullscreen
+SUPER + SHIFT + J   ➜  Toggle Split
+SUPER + ALT + ARRS  ➜  Resize window
+SUPER + SHIFT + G   ➜  Toggle Window Groups
+SUPER + [1-0]       ➜  Switch to Workspace
+SUPER + SHIFT + [1-0] ➜  Move window to Workspace
 
-    # Process binding lines
-    /^bind[a-z]* *=/ {
-        line = $0;
-        sub(/^bind[a-z]* *= */, "", line);
-        
-        split(line, parts, ",");
-        mods = parts[1];
-        key = parts[2];
-        dispatcher = parts[3];
-        
-        gsub(/^[ \t]+|[ \t]+$/, "", mods);
-        gsub(/^[ \t]+|[ \t]+$/, "", key);
-        gsub(/^[ \t]+|[ \t]+$/, "", dispatcher);
+🛠️ SYSTEM UTILITIES
+SUPER + SHIFT + S   ➜  Screenshot
+SUPER + CTRL + L    ➜  Lock Screen
+SUPER + CTRL + SPCE ➜  Keybindings menu
+SUPER + CTRL + T    ➜  System Monitor (btop)
+SUPER + CTRL + A    ➜  Audio Mixer (pulsemixer)
+SUPER + CTRL + W    ➜  Network Manager (nmtui)
+SUPER + CTRL + I    ➜  Toggle Idle (prevent sleep)
+SUPER + SHIFT + SPCE ➜  Toggle Status Bar (Waybar)
 
-        # We ONLY want application launchers (exec dispatcher)
-        if (dispatcher != "exec") {
-            next;
-        }
+📋 CLIPBOARD & NOTIFS
+SUPER + C / V / X   ➜  Copy / Paste / Cut
+SUPER + CTRL + V    ➜  Clipboard History
+SUPER + COMMA       ➜  Dismiss notification
+SUPER + SHIFT + COMMA ➜  Dismiss all notifications
+SUPER + CTRL + COMMA ➜  Do Not Disturb (Silence)
 
-        # Reconstruct the full action
-        action = "";
-        for (i=3; i<=length(parts); i++) {
-            action = action (i==3 ? "" : ",") parts[i];
-        }
-        gsub(/^[ \t]+|[ \t]+$/, "", action);
+🎵 MEDIA & HARDWARE
+Audio Keys          ➜  Control Volume & Mute
+Brightness Keys     ➜  Monitor & Keyboard Backlight
+Media Keys          ➜  Play / Pause / Skip
 
-        # Filter out system utilities, toggles, and UI controls from the "Apps" list
-        if (action ~ /nix-lock-screen|nix-toggle-|brightness|screenshot|audio-switch|makoctl|playerctl|osdclient|hyprctl|pkill|swayosd|walker|nix-menu-|nix-hyprland-/) {
-            next;
-        }
-        
-        # Translate codes to readable keys (10-19 -> 1-0)
-        if (key ~ /^code:1[0-9]/) {
-            split(key, kp, ":");
-            val = kp[2] - 9;
-            if (val == 10) val = 0;
-            key = val;
-        }
+⚡ POWER ACTIONS
+󰌾  Lock            ➜  Lock the session
+󰍃  Logout          ➜  Exit Hyprland
+󰜉  Reboot          ➜  Restart the computer
+⏻  Shutdown        ➜  Power off the computer"
 
-        # Map actions to short, descriptive words
-        display_desc = last_comment;
-        if (display_desc == "") {
-            if (action ~ /uwsm-app -- brave$/) display_desc = "Open Browser";
-            else if (action ~ /uwsm-app -- alacritty -e nvim/) display_desc = "Open Editor";
-            else if (action ~ /alacritty --class TUI.float -e lazygit/) display_desc = "Open Lazygit";
-            else if (action ~ /nix-launch-or-focus spotify/) display_desc = "Open Spotify";
-            else if (action ~ /pcmanfm/) display_desc = "Open Files";
-            else if (action ~ /xdg-terminal-exec/) display_desc = "Open Terminal";
-            else if (action ~ /nix-app-launcher.py/) display_desc = "App Launcher";
-            else if (action ~ /obsidian/) display_desc = "Open Obsidian";
-            
-            # URLs
-            else if (action ~ /https?:\/\//) {
-                if (action ~ /youtube\.com/) display_desc = "Open YouTube";
-                else if (action ~ /web\.whatsapp\.com/) display_desc = "Open WhatsApp";
-                else if (action ~ /google\.com/) {
-                     if (action ~ /photos/) display_desc = "Open Photos";
-                     else if (action ~ /messages/) display_desc = "Open Messages";
-                     else display_desc = "Open Google";
-                }
-                else display_desc = "Open Web App";
-            }
-            
-            # Catch-all simplification
-            else {
-                desc = action;
-                gsub(/^exec, /, "", desc);
-                gsub(/uwsm-app -- /, "", desc);
-                while (match(desc, /\/[^\/ ]+/)) {
-                    path_part = substr(desc, RSTART, RLENGTH);
-                    sub(/.*\//, "", path_part);
-                    desc = substr(desc, 1, RSTART-1) path_part substr(desc, RSTART+RLENGTH);
-                }
-                gsub(/\.py|\.sh|\.js|nix-cmd-|nix-launch-|nix-/, "", desc);
-                gsub(/,|_|-/, " ", desc);
-                gsub(/  +/, " ", desc);
-                display_desc = toupper(substr(desc,1,1)) substr(desc,2);
-            }
-        }
+# Show the menu
+CHOICE=$(echo "$LIST" | fuzzel --dmenu -p "" --placeholder "Shortcuts & System…" --width 100)
 
-        print mods " + " key "  ➜  " display_desc;
-        last_comment = "";
-    }
-    
-    # Reset comment on empty lines
-    /^[ \t]*$/ { last_comment = "" }
-' "${BINDINGS_FILES[@]}" | sort -u)
-
-echo "$FORMATTED" | fuzzel --dmenu -p "" --placeholder "Apps Shortcuts…" --width 100
+# If a power action is selected, execute it
+case "$CHOICE" in
+    *Lock*)
+        "$HOME/nixos-dotfiles/config/scripts/nix-lock-screen"
+        ;;
+    *Logout*)
+        hyprctl dispatch exit
+        ;;
+    *Reboot*)
+        systemctl reboot
+        ;;
+    *Shutdown*)
+        systemctl poweroff
+        ;;
+esac
