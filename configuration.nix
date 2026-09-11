@@ -7,59 +7,41 @@
       ./hardware-configuration.nix
     ];
 
-  # --- Boot & Hardware ---
-  # Bootloader configuration (systemd-boot for modern UEFI systems)
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  # --- Boot & Hardware (Apple Silicon M2 Air) ---
+  # Asahi support: kernel, GPU driver, peripheral firmware and speakers/mic DSP
+  hardware.asahi = {
+    enable = true;
+    peripheralFirmwareDirectory = ./firmware; # must be tracked by git so the flake can see it
+    setupAsahiSound = true;
+  };
 
-  # Load nvidia driver for Xorg and Wayland
-  services.xserver.videoDrivers = ["nvidia"];
+  # Bootloader configuration (systemd-boot behind Asahi's m1n1/U-Boot)
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.systemd-boot.configurationLimit = 5; # the Asahi EFI partition is small
+  boot.loader.efi.canTouchEfiVariables = false; # U-Boot does not expose EFI variables
 
   hardware.graphics.enable = true;
 
-  hardware.nvidia = {
-    # Modesetting is required.
-    modesetting.enable = true;
-
-    # Nvidia power management. Experimental, and can cause sleep/suspend to fail.
-    # Enable this if you have graphical corruption issues or application crashes after waking
-    # up from sleep. This fixes it by saving the entire VRAM memory to /tmp/ instead 
-    # of just the bare essentials.
-    powerManagement.enable = false;
-
-    # Fine-grained power management. Turns off GPU when not in use.
-    # Experimental and only works on modern Nvidia GPUs (Turing or newer).
-    powerManagement.finegrained = false;
-
-    # Use the NVidia open source kernel module (not to be confused with the
-    # linux-nouveau open source driver).
-    # This is currently only available on target hosts with Turing or newer GPUs.
-    open = false;
-
-    # Enable the Nvidia settings menu,
-    # accessible via `nvidia-settings`.
-    nvidiaSettings = true;
-
-    # Optionally, you may need to select the appropriate driver version for your specific GPU.
-    package = config.boot.kernelPackages.nvidiaPackages.stable;
-  };
-
   # --- Networking ---
-  networking.hostName = "nixos";
+  networking.hostName = "oso-air";
   networking.networkmanager.enable = true; # Enables NetworkManager for easy WiFi/Ethernet configuration
+  networking.networkmanager.wifi.backend = "iwd"; # iwd is the working Wi-Fi backend on Asahi (Broadcom)
 
   # --- Localization ---
   # Timezone and Locale settings
   time.timeZone = "Europe/Berlin";
   i18n.defaultLocale = "de_DE.UTF-8";
   console.keyMap = "de";
-  
+
   # X11 Keymap (also applies to Wayland/Hyprland by default)
   services.xserver.xkb.layout = "de";
 
   # --- Services ---
   # Display Manager (The login screen)
   services.displayManager.ly.enable = true; # Ly is a fast, lightweight terminal-based display manager
+  # Ly scans /etc/ly/custom-sessions at startup and shows "failed to crawl session directories"
+  # above the password field if it does not exist. The NixOS module does not create it, so we do.
+  systemd.tmpfiles.rules = [ "d /etc/ly/custom-sessions 0755 root root -" ];
 
   # Bluetooth
   hardware.bluetooth.enable = true; # Enables Bluetooth hardware support
@@ -73,7 +55,6 @@
   services.pipewire = {
     enable = true;
     alsa.enable = true;
-    alsa.support32Bit = true;
     pulse.enable = true;
   };
 
@@ -92,13 +73,9 @@
     config.common.default = [ "hyprland" "gtk" ];
   };
 
-  # --- Programs ---
-  # Gaming
-  programs.steam.enable = true; # Enables Steam and automatically opens necessary firewall ports
-
   # --- Users ---
   # User Configuration
-  users.users.ole = {
+  users.users.oso = {
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" ]; # 'wheel' grants you sudo privileges, 'networkmanager' lets you change wifi without password
     packages = with pkgs; []; # User-specific packages are managed in home.nix instead of here
@@ -121,7 +98,7 @@
 
   # --- Nix Package Manager Settings ---
   nix.settings.experimental-features = [ "nix-command" "flakes" ]; # Enables modern Nix commands and Flakes
-  
+
   # System Optimizations
   nix.settings.auto-optimise-store = true; # Saves disk space by automatically hardlinking identical files in /nix/store
   nix.gc = {
@@ -131,18 +108,18 @@
   };
 
   # Enables compressed RAM swap for better memory management without wearing out your SSD
-  zramSwap.enable = true; 
+  zramSwap.enable = true;
 
-  # Allow proprietary software (like Steam, specific drivers, etc.)
+  # Allow proprietary software (like Brave, Obsidian, etc.)
   nixpkgs.config.allowUnfree = true;
 
   # System-level configuration files
   environment.etc = {
     # Symlinks your local theme policy so Brave/Chromium can read the theme colors without requiring sudo
-    "brave/policies/managed/color.json".source = "/home/ole/nixos-dotfiles/config/theme/brave-policy.json";
-    "chromium/policies/managed/color.json".source = "/home/ole/nixos-dotfiles/config/theme/brave-policy.json";
+    "brave/policies/managed/color.json".source = "/home/oso/nixos-dotfiles/config/theme/brave-policy.json";
+    "chromium/policies/managed/color.json".source = "/home/oso/nixos-dotfiles/config/theme/brave-policy.json";
   };
 
   # State version (Do not change this! It ensures backwards compatibility with databases created when you installed NixOS)
-  system.stateVersion = "25.05";
+  system.stateVersion = "26.05";
 }

@@ -1,4 +1,4 @@
-general.import = [ "~/.config/theme/alacritty.toml" ]
+general.import = [ "~/.config/alacritty/theme.toml" ]
 
 [env]
 TERM = "xterm-256color"

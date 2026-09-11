@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+import getpass
 import json
 import subprocess
 import re
@@ -11,7 +12,7 @@ CONFIG_PATH = os.path.expanduser("~/nixos-dotfiles/config/fuzzel/custom-launcher
 CACHE_PATH = os.path.expanduser("~/.cache/fuzzel-launcher-cache.txt")
 DESKTOP_DIRS = [
     os.path.expanduser("~/.local/share/applications"),
-    "/etc/profiles/per-user/ole/share/applications",
+    "/etc/profiles/per-user/" + getpass.getuser() + "/share/applications",
     "/run/current-system/sw/share/applications"
 ]
 

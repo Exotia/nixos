@@ -17,7 +17,7 @@ if [[ ! -d "$THEMES_DIR/$THEME" ]]; then
 fi
 
 # Update symlink using absolute path for reliability
-ln -nsf "$THEMES_DIR/$THEME" "$THEME_LINK"
+ln -nsf "themes/$THEME" "$THEME_LINK"
 echo "Switched to theme: $THEME"
 
 # Update templated configs

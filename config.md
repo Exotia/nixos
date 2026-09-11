@@ -1,15 +1,15 @@
 # NixOS System Configuration Overview
 
-This document summarizes the architecture and configuration of the NixOS system for user **ole**.
+This document summarizes the architecture and configuration of the NixOS system for user **oso** (MacBook Air M2, Asahi/aarch64).
 
 ## 🖥️ System Core
-- **OS:** NixOS (State Version 25.05)
-- **Hostname:** `nixos`
-- **Package Management:** Nix Flakes enabled (`~/nixos-dotfiles#nixos`)
+- **OS:** NixOS (State Version 26.05)
+- **Hostname:** `oso-air`
+- **Package Management:** Nix Flakes enabled (`~/nixos-dotfiles#oso-air`)
 - **Display Manager:** `ly` (Terminal-based)
 - **Compositor:** `Hyprland` (Wayland)
 - **Session Manager:** `UWSM` (Universal Wayland Session Manager)
-- **Nvidia Integration:** Stable proprietary drivers with modesetting enabled.
+- **Hardware:** Apple Silicon via `nixos-apple-silicon` (Asahi kernel, firmware in `firmware/`).
 
 ## 🛠️ User Environment (Home Manager)
 - **Shell:** `bash` with `starship` prompt.
@@ -33,7 +33,7 @@ This document summarizes the architecture and configuration of the NixOS system 
 Your system relies on a suite of custom automation scripts:
 - `launch-webapp`: Launches websites as isolated browser apps with dark mode support.
 - `nix-app-launcher.py`: A custom fuzzy-search menu for desktop applications.
-- `nrs`: Alias for `sudo nixos-rebuild switch --flake ~/nixos-dotfiles#nixos`.
+- `nrs`: Alias for `sudo nixos-rebuild switch --flake ~/nixos-dotfiles#oso-air`.
 - `nix-theme-*`: A set of scripts for system-wide theme synchronization (Brave, VSCode, GNOME).
 
 ## 🔧 Critical Fixes Applied (March 2026)

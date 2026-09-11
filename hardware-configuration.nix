@@ -8,26 +8,31 @@
     [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" ];
+  boot.initrd.availableKernelModules = [ ];
   boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-intel" ];
+  boot.kernelModules = [ ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/0646ec5b-092c-47a9-97bb-3dd40a2268da";
-      fsType = "ext4";
+    { device = "/dev/disk/by-uuid/36431cc9-a4f5-4c93-9740-ea1e09fce299";
+      fsType = "btrfs";
+      options = [ "subvol=root" ];
+    };
+
+
+  fileSystems."/home" =
+    { device = "/dev/disk/by-uuid/36431cc9-a4f5-4c93-9740-ea1e09fce299";
+      fsType = "btrfs";
+      options = [ "subvol=home" ];
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/0DDB-6B33";
+    { device = "/dev/disk/by-uuid/0A11-98C0";
       fsType = "vfat";
       options = [ "fmask=0022" "dmask=0022" ];
     };
 
-  swapDevices =
-    [ { device = "/dev/disk/by-uuid/8be9a212-9a60-4999-939a-2b8755bb5c20"; }
-    ];
+  swapDevices = [ ];
 
-  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+  nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";
 }

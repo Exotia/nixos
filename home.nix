@@ -28,19 +28,15 @@ in
   imports = [
   ];
 
-  home.username = "ole";
-  home.homeDirectory = "/home/ole";
-  home.stateVersion = "25.05"; # Do not change this unless explicitly migrating to a new NixOS version
+  home.username = "oso";
+  home.homeDirectory = "/home/oso";
+  home.stateVersion = "26.05"; # Do not change this unless explicitly migrating to a new NixOS version
 
   # Environment variables available to all applications in your graphical session
   home.sessionVariables = {
     NIXOS_PATH = "${config.home.homeDirectory}/nixos-dotfiles/config";
     XDG_TERMINAL_EXEC = "alacritty"; # Sets the default terminal emulator for scripts and desktop apps
-    LIBVA_DRIVER_NAME = "nvidia"; # Enables hardware acceleration for video playback
     XDG_SESSION_TYPE = "wayland"; # Informs apps that you are running a Wayland session
-    GBM_BACKEND = "nvidia-drm"; # Required for many applications to render correctly on NVIDIA
-    __GLX_VENDOR_LIBRARY_NAME = "nvidia"; # Ensures apps use the NVIDIA implementation of GLX
-    NVD_BACKEND = "direct"; # Improves VA-API (video acceleration) performance on NVIDIA
   };
 
   # Adds your custom scripts directory to the system PATH so you can run them directly from any terminal
@@ -56,10 +52,10 @@ in
     enable = true;
     shellAliases = {
       btw = "echo i use hyprland btw";
-      nrs = "sudo nixos-rebuild switch --flake ~/nixos-dotfiles#nixos --update"; # The main alias for applying system updates
+      nrs = "sudo nixos-rebuild switch --flake ~/nixos-dotfiles#oso-air"; # The main alias for applying system updates
       vim = "nvim";
       wifi = "nmtui"; # Easy terminal-based WiFi management
-      lookup = "find /etc/profiles/per-user/ole/share/applications /run/current-system/sw/share/applications ~/.local/share/applications";
+      lookup = "find /etc/profiles/per-user/$USER/share/applications /run/current-system/sw/share/applications ~/.local/share/applications";
     };
     initExtra = ''
       export PS1='\[\e[38;5;76m\]\u\[\e[0m\] in \[\e[38;5;32m\]\w\[\e[0m\] \\$ ' # Custom terminal prompt colors
@@ -75,6 +71,9 @@ in
     defaultEditor = true;
     viAlias = true;
     vimAlias = true;
+    # Do not write ~/.config/nvim/init.lua: ~/.config/nvim is a symlink into the
+    # dotfiles repo (LazyVim owns it); home-manager sideloads its init instead.
+    sideloadInitLua = true;
 
     # Includes common dependencies
     withNodeJs = true;
@@ -118,12 +117,12 @@ in
     yaml-language-server
     pyright
     nixd # Another Nix LSP (often more feature-rich than nil)
-    nodePackages.prettier # Multi-language formatter
-    nodePackages.svelte-language-server
-    nodePackages.eslint_d
-    python312Packages.pylint
-    python312Packages.isort
-    python312Packages.black
+    prettier # Multi-language formatter
+    svelte-language-server
+    eslint_d
+    python3Packages.pylint
+    python3Packages.isort
+    python3Packages.black
     emmet-ls
 
     # --- Desktop Environment Core (Hyprland Ecosystem) ---
@@ -166,9 +165,8 @@ in
     mpv # Lightweight, highly capable media player
     vlc # Feature-rich media player (set as default for video)
     vesktop # Custom Discord client (supports screen sharing on Wayland and Vencord plugins)
-    wasistlos # Unofficial WhatsApp client
+    karere # WhatsApp client (replaces wasistlos, which was removed from nixpkgs)
     obsidian # Markdown-based note-taking application
-    spotify # Music streaming client
 
     # --- Multimedia & Screen Capture ---
     pulsemixer # Command-line audio mixer (used by SUPER+CTRL+A)

@@ -2,12 +2,10 @@
 
 # Cycles through the background images available
 
-THEME_NAME=$(cat "$HOME/.config/arch/current/theme.name" 2>/dev/null)
-THEME_BACKGROUNDS_PATH="$HOME/.config/arch/current/theme/backgrounds/"
-USER_BACKGROUNDS_PATH="$HOME/.config/arch/backgrounds/$THEME_NAME/"
-CURRENT_BACKGROUND_LINK="$HOME/.config/arch/current/background"
+THEME_BACKGROUNDS_PATH="$HOME/nixos-dotfiles/config/theme/backgrounds/"
+CURRENT_BACKGROUND_LINK="$HOME/.cache/current-background"
 
-mapfile -d '' -t BACKGROUNDS < <(find -L "$USER_BACKGROUNDS_PATH" "$THEME_BACKGROUNDS_PATH" -maxdepth 1 -type f -print0 2>/dev/null | sort -z)
+mapfile -d '' -t BACKGROUNDS < <(find -L "$THEME_BACKGROUNDS_PATH" -maxdepth 1 -type f -print0 2>/dev/null | sort -z)
 TOTAL=${#BACKGROUNDS[@]}
 
 if (( TOTAL == 0 )); then
@@ -41,10 +39,5 @@ else
     NEW_BACKGROUND="${BACKGROUNDS[$NEXT_INDEX]}"
   fi
 
-  # Set new background symlink
-  ln -nsf "$NEW_BACKGROUND" "$CURRENT_BACKGROUND_LINK"
-
-  # Relaunch swaybg
-  pkill -x swaybg
-  setsid uwsm-app -- swaybg -i "$CURRENT_BACKGROUND_LINK" -m fill >/dev/null 2>&1 &
+  "$HOME/nixos-dotfiles/config/scripts/nix-theme-bg-set" "$NEW_BACKGROUND"
 fi
