@@ -6,13 +6,14 @@ LIST="🚀 APPLICATION LAUNCHERS
 SUPER + SPACE       ➜  Favorites menu
 SUPER + A           ➜  App Launcher
 SUPER + RETURN      ➜  Terminal (at current directory)
-SUPER + T           ➜  Terminal
+SUPER + T           ➜  Twitch (Web App)
 SUPER + SHIFT + RET ➜  Brave Browser
 SUPER + ALT + RET   ➜  Brave Browser (Incognito)
 SUPER + F           ➜  File Manager (PCManFM)
 SUPER + ALT + F     ➜  File Manager (at terminal dir)
 SUPER + S           ➜  Launch or Focus Spotify
 SUPER + O           ➜  Launch or Focus Obsidian
+SUPER + G           ➜  Gemini (Brave)
 SUPER + Y           ➜  YouTube (Web App)
 
 🪟 WINDOW MANAGEMENT
@@ -25,13 +26,14 @@ SUPER + SHIFT + F   ➜  Toggle Fullscreen
 SUPER + SHIFT + J   ➜  Toggle Split
 SUPER + ALT + ARRS  ➜  Resize window
 SUPER + SHIFT + G   ➜  Toggle Window Groups
-SUPER + [1-0]       ➜  Switch to Workspace
+SUPER + [1-9]       ➜  Switch to Workspace
 SUPER + SHIFT + [1-0] ➜  Move window to Workspace
 
 🛠️ SYSTEM UTILITIES
 SUPER + SHIFT + S   ➜  Screenshot
 SUPER + CTRL + L    ➜  Lock Screen
 SUPER + CTRL + SPCE ➜  Keybindings menu
+SUPER + 0           ➜  Theme & system menu
 SUPER + CTRL + T    ➜  System Monitor (btop)
 SUPER + CTRL + A    ➜  Audio Mixer (pulsemixer)
 SUPER + CTRL + W    ➜  Network Manager (nmtui)
@@ -40,7 +42,6 @@ SUPER + SHIFT + SPCE ➜  Toggle Status Bar (Waybar)
 
 📋 CLIPBOARD & NOTIFS
 SUPER + C / V / X   ➜  Copy / Paste / Cut
-SUPER + CTRL + V    ➜  Clipboard History
 SUPER + COMMA       ➜  Dismiss notification
 SUPER + SHIFT + COMMA ➜  Dismiss all notifications
 SUPER + CTRL + COMMA ➜  Do Not Disturb (Silence)
@@ -49,6 +50,7 @@ SUPER + CTRL + COMMA ➜  Do Not Disturb (Silence)
 Audio Keys          ➜  Control Volume & Mute
 Brightness Keys     ➜  Monitor & Keyboard Backlight
 Media Keys          ➜  Play / Pause / Skip
+SUPER + ESC         ➜  Shutdown immediately (no confirmation)
 
 ⚡ POWER ACTIONS
 󰌾  Lock            ➜  Lock the session

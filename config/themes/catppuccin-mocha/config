@@ -1,4 +1,4 @@
-include=~/.config/default/mako/core.ini
+include=~/nixos-dotfiles/config/mako/core.ini
 
 text-color=#cdd6f4
 border-color=#cba6f7

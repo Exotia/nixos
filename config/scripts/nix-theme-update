@@ -4,7 +4,7 @@
 # and saves the results to the appropriate config paths.
 
 COLORS_FILE="$HOME/nixos-dotfiles/config/theme/colors.toml"
-TEMPLATES_DIR="$HOME/nixos-dotfiles/config/default/themed"
+TEMPLATES_DIR="$HOME/nixos-dotfiles/config/templates"
 CONFIGS_DIR="$HOME/nixos-dotfiles/config"
 
 if [[ ! -f $COLORS_FILE ]]; then

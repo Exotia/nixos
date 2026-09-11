@@ -1,4 +1,4 @@
-include=~/.config/default/mako/core.ini
+include=~/nixos-dotfiles/config/mako/core.ini
 
 text-color={{ foreground }}
 border-color={{ accent }}
