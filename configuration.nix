@@ -75,9 +75,11 @@
     overrideStrategy = "asDropin";
     serviceConfig.TimeoutStopSec = "5s";
   };
-  # Never let any other hung unit hold a reboot for longer than this either
-  systemd.user.extraConfig = "DefaultTimeoutStopSec=15s";
-  systemd.extraConfig = "DefaultTimeoutStopSec=15s";
+  # Never let any other hung unit hold a reboot for longer than this either.
+  # systemd.extraConfig / systemd.user.extraConfig were removed from nixpkgs; the
+  # structured settings options replace them.
+  systemd.settings.Manager.DefaultTimeoutStopSec = "15s";
+  systemd.user.settings.Manager.DefaultTimeoutStopSec = "15s";
 
   # hyprlock must be allowed to verify your password, otherwise the lock screen cannot be unlocked
   security.pam.services.hyprlock = { };
