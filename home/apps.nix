@@ -1,18 +1,19 @@
 { ... }:
 
-# Web-app desktop entries and default applications for file types
+# Web-app desktop entries and default applications for file types.
+# These launch the browser from home/packages/apps.nix.
 {
   xdg.desktopEntries = {
     github = {
       name = "GitHub";
-      exec = "brave https://github.com";
+      exec = "firefox https://github.com";
       icon = "github";
       terminal = false;
       categories = [ "Development" ];
     };
     youtube = {
       name = "YouTube";
-      exec = "brave https://youtube.com";
+      exec = "firefox https://youtube.com";
       icon = "youtube";
       terminal = false;
       categories = [ "Video" ];

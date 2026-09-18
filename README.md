@@ -1,19 +1,30 @@
 # nixos-dotfiles
 
-NixOS + Home Manager configuration for **oso-air** (MacBook Air M2, Asahi, aarch64) running Hyprland.
+NixOS + Home Manager configuration running Hyprland, shared across machines.
+
+| Host | Machine |
+|---|---|
+| `oso-air` | MacBook Air M2, Asahi, aarch64 |
+| `oso-pi` | Raspberry Pi 5, aarch64 |
+
+Installing on a new machine, including adding a host of your own, is
+documented in [docs/INSTALL.md](docs/INSTALL.md).
 
 ## Layout
 
 ```
-flake.nix                 inputs (nixpkgs, nixos-apple-silicon, home-manager) and the oso-air host
-configuration.nix         system: boot, networking, locale, ly login screen, audio, Hyprland, system packages
-hardware-configuration.nix
-home.nix                  Home Manager entry point, only imports + identity
+flake.nix                 inputs and the mkHost helper; one call per machine
+modules/common.nix        portable system config: locale, Hyprland, ly, audio, fonts, users, gc
+hosts/oso-air/            MacBook Air: Asahi firmware, systemd-boot, iwd, power profiles
+hosts/oso-pi/             Raspberry Pi 5: firmware partition, U-Boot, SSH, mDNS
+home/common.nix           Home Manager entry point, only imports + identity
+home/profiles/<host>.nix  which package sets that machine gets
 home/
   packages/cli.nix        command-line tools, `ns` package search
   packages/dev.nix        language servers, linters, formatters
   packages/desktop.nix    Hyprland ecosystem + system integration
   packages/apps.nix       graphical apps, multimedia, screen capture
+  packages/apps-heavy.nix large Electron apps, opted into per host
   dotfiles.nix            ~/.config/<name> -> config/<name> live symlinks
   shell.nix               bash aliases and prompt
   neovim.nix              editor
@@ -33,14 +44,22 @@ config/                   everything symlinked into ~/.config (edits apply live,
   waybar/ alacritty/ fuzzel/ mako/ swayosd/ nvim/ ...  per-app configs
 ```
 
-Rebuild with `nrs` (alias for `sudo nixos-rebuild switch --flake ~/nixos-dotfiles#oso-air`).
-Only Nix files need a rebuild. Files under `config/` are live.
+Rebuild with `nrs` (alias for `sudo nixos-rebuild switch --flake ~/nixos-dotfiles#$(hostname)`).
+The flake attribute comes from the machine's hostname, so the same alias works
+on every host. Only Nix files need a rebuild. Files under `config/` are live.
+
+The repo must be cloned to exactly `~/nixos-dotfiles`: everything under
+`config/` is symlinked live from that path.
 
 ## How to add things
 
 **A package**
-1. Add one line to the matching list in `home/packages/*.nix` (system-wide tools go in `configuration.nix`).
+1. Add one line to the matching list in `home/packages/*.nix` (system-wide tools go in `modules/common.nix`).
 2. `nrs`
+
+To give a package to one machine only, put it in its own file under
+`home/packages/` and import that from `home/profiles/<host>.nix`, the way
+`apps-heavy.nix` is wired up.
 
 **An app with a shortcut**
 1. Package: one line in `home/packages/apps.nix`.
@@ -71,4 +90,6 @@ Copy an existing directory under `config/themes/`, edit `colors.toml`, put image
 - SUPER + 0 opens the theme and power menu, so workspace 10 has no switch key.
 - SUPER + Escape powers off immediately.
 - Caps Lock is a Compose key.
-- The ly login screen needs `/etc/ly/custom-sessions` to exist. `configuration.nix` creates it with a tmpfiles rule.
+- The ly login screen needs `/etc/ly/custom-sessions` to exist. `modules/common.nix` creates it with a tmpfiles rule.
+- A flake cannot see files Git does not track. `git add` new files before rebuilding.
+- The Pi 5 uses Raspberry Pi's vendor kernel, which no binary cache carries. The first build compiles it.

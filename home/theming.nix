@@ -3,6 +3,7 @@
 # Cursor, GTK, Qt and dconf dark-mode preferences
 {
   home.pointerCursor = {
+    enable = true; # relying on the block alone to enable cursor config is deprecated
     gtk.enable = true;
     x11.enable = true;
     package = pkgs.bibata-cursors;

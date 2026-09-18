@@ -11,7 +11,9 @@
     historyControl = [ "ignoredups" "erasedups" ];
     shellOptions = [ "histappend" "checkwinsize" "extglob" "globstar" ];
     shellAliases = {
-      nrs = "sudo nixos-rebuild switch --flake ~/nixos-dotfiles#oso-air"; # The main alias for applying system updates
+      # The main alias for applying system updates. The flake attribute is the
+      # machine's own hostname, so this works unchanged on every host.
+      nrs = "sudo nixos-rebuild switch --flake ~/nixos-dotfiles#\"$(hostname)\"";
       vim = "nvim";
       wifi = "nmtui"; # Easy terminal-based WiFi management
       lookup = "find /etc/profiles/per-user/$USER/share/applications /run/current-system/sw/share/applications ~/.local/share/applications";
