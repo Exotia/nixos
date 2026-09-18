@@ -81,8 +81,35 @@ Then, from the Air:
 
 ```bash
 nixos-rebuild switch --flake ~/nixos-dotfiles#oso-pi \
-  --target-host nixos@<pi-ip> --use-remote-sudo
+  --target-host root@<pi-ip> --use-substitutes
 ```
+
+Two flags earn their place. `--use-substitutes` lets the Pi pull from the
+NixOS cache itself rather than having all 9 GB pushed from the Air, which
+otherwise crosses your access point twice. Root is the target user because
+activation needs root, and going through `oso` would stop for a sudo password
+on every deploy.
+
+`nixos-rebuild` spawns its own ssh and will not see a key you passed by hand,
+so give it one. Either export it for the run:
+
+```bash
+export NIX_SSHOPTS="-i ~/.ssh/github -o IdentitiesOnly=yes"
+```
+
+or, better, put the host in `~/.ssh/config` once:
+
+```
+Host oso-pi
+  Hostname 192.168.178.108
+  User root
+  IdentityFile ~/.ssh/github
+  IdentitiesOnly yes
+```
+
+after which `--target-host oso-pi` is enough. Without `IdentitiesOnly`, ssh
+offers every key it has and the Pi closes the connection with "Too many
+authentication failures".
 
 **Or build on the Pi.** Slow, but needs nothing else:
 
