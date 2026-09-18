@@ -47,10 +47,15 @@
     enable = true;
     settings = {
       PasswordAuthentication = false;
-      PermitRootLogin = "no";
+      # Key only, never a password. Root login stays open to keys because
+      # nixos-rebuild --target-host has to activate the new system: going
+      # through oso instead would prompt for a sudo password on every deploy,
+      # which does not work unattended.
+      PermitRootLogin = "prohibit-password";
     };
   };
   users.users.oso.openssh.authorizedKeys.keyFiles = [ ./authorized_keys.pub ];
+  users.users.root.openssh.authorizedKeys.keyFiles = [ ./authorized_keys.pub ];
 
   # Only applies the first time the account is created. Change it with `passwd`
   # after the first login; until then it sits in the world-readable Nix store.
