@@ -93,3 +93,4 @@ Copy an existing directory under `config/themes/`, edit `colors.toml`, put image
 - The ly login screen needs `/etc/ly/custom-sessions` to exist. `modules/common.nix` creates it with a tmpfiles rule.
 - A flake cannot see files Git does not track. `git add` new files before rebuilding.
 - The Pi 5 uses Raspberry Pi's vendor kernel, which no binary cache carries. The first build compiles it.
+- The Pi's firmware partition is only 30 MB, so `hosts/oso-pi` strips the `start*.elf` GPU firmware that a Pi 5 never loads. Without that the firmware install runs out of space.
