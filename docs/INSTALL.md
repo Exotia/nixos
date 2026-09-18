@@ -22,9 +22,15 @@ Use a `nixos-unstable` image. The 26.05 release images do not carry the Pi 5
 boot files. The aarch64 image published by Hydra is the installer variant: it
 autologins as `nixos`, gives that account passwordless sudo, and runs sshd.
 
+Hydra's `latest/download/1` shortcut serves an HTML page rather than the
+image, so resolve the build and its product name first:
+
 ```bash
-curl -L -o nixos-sd.img.zst \
-  'https://hydra.nixos.org/job/nixos/trunk-combined/nixos.sd_image.aarch64-linux/latest/download/1'
+job=https://hydra.nixos.org/job/nixos/trunk-combined/nixos.sd_image.aarch64-linux/latest
+bid=$(curl -sL "$job" -H 'Accept: application/json' | jq -r .id)
+name=$(curl -sL "https://hydra.nixos.org/build/$bid" -H 'Accept: application/json' \
+         | jq -r '.buildproducts."1".name')
+curl -L -o nixos-sd.img.zst "https://hydra.nixos.org/build/$bid/download/1/$name"
 zstd -d nixos-sd.img.zst -o nixos-sd.img
 ```
 
