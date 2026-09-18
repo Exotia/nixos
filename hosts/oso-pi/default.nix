@@ -40,6 +40,16 @@
     '';
   };
 
+  # Mainline kernel, not Raspberry Pi's vendor one. nixos-hardware defaults to
+  # the vendor kernel, which no binary cache carries, so it costs about an hour
+  # of compiling per bump.
+  #
+  # That price buys nothing here. The stock NixOS image booted this board on
+  # mainline 6.18.52 with vc4 and v3d loaded and both HDMI outputs live, which
+  # is the whole graphics stack Hyprland needs. The Pi 4's BCM2711 has been
+  # mainlined for years; it is the Pi 5 that still needs the vendor tree.
+  boot.kernelPackages = pkgs.linuxPackages;
+
   # Keep the GIC-400 interrupt controller settings that the stock NixOS SD
   # image puts in config.txt. nixos-hardware does not set these, but this board
   # is demonstrably using the GIC: its kernel log reports "Root IRQ handler:
