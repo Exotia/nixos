@@ -40,6 +40,22 @@
     '';
   };
 
+  # Keep the GIC-400 interrupt controller settings that the stock NixOS SD
+  # image puts in config.txt. nixos-hardware does not set these, but this board
+  # is demonstrably using the GIC: its kernel log reports "Root IRQ handler:
+  # gic_handle_irq". Our config.txt replaces the stock one wholesale, so
+  # without these two lines the next boot would come up differently from the
+  # one that is known to work here.
+  #
+  # armstub8-gic.bin comes from the stock image and stays on the firmware
+  # partition: this module only ever prunes stale *.dtb and overlays/*, never
+  # other files. A card written from scratch by some future flow would need it
+  # copied over as well.
+  hardware.raspberry-pi.configtxt.settings.pi4 = {
+    enable_gic = true;
+    armstub = "armstub8-gic.bin";
+  };
+
   # Build on a faster machine and push the result:
   #   nixos-rebuild switch --flake ~/nixos-dotfiles#oso-pi \
   #     --target-host oso@oso-pi.local --use-remote-sudo
