@@ -17,7 +17,8 @@ FAVORITES = [
     "obsidian.desktop",
     "vesktop.desktop",
     "github.desktop",
-    "LocalSend.desktop"
+    "LocalSend.desktop",
+    "thunderbird.desktop"
 ]
 
 CONFIG_PATH = os.path.expanduser("~/nixos-dotfiles/config/fuzzel/custom-launcher.json")

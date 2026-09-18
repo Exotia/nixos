@@ -1,0 +1,45 @@
+# ble.sh settings — https://github.com/akinomyoga/ble.sh/wiki
+# Live-linked from ~/.blerc; edits apply in the next shell, no rebuild.
+
+# --- History: Up/Down search by the prefix already typed (type "git", press Up) ---
+ble-bind -m emacs -f up   'history-search-backward hide-status'
+ble-bind -m emacs -f down 'history-search-forward hide-status'
+# Ctrl-P / Ctrl-N keep plain previous/next
+ble-bind -m emacs -f C-p  'history-prev'
+ble-bind -m emacs -f C-n  'history-next'
+
+# --- Highlighting: colours on the words only, no backgrounds (zsh-syntax-highlighting look) ---
+ble-face -s command_builtin      fg=green
+ble-face -s command_alias        fg=cyan
+ble-face -s command_function     fg=green
+ble-face -s command_file         fg=green
+ble-face -s command_keyword      fg=yellow
+ble-face -s command_jobs         fg=green
+ble-face -s command_directory    fg=blue,underline
+ble-face -s syntax_error         fg=red,bold
+ble-face -s argument_error       fg=red
+ble-face -s argument_option      fg=teal
+ble-face -s syntax_quoted        fg=yellow
+ble-face -s syntax_quotation     fg=yellow
+ble-face -s syntax_varname       fg=magenta
+ble-face -s syntax_param_expansion fg=magenta
+ble-face -s syntax_comment       fg=gray
+ble-face -s syntax_glob          fg=purple
+ble-face -s syntax_escape        fg=magenta
+ble-face -s filename_directory   fg=blue
+ble-face -s filename_executable  fg=green
+ble-face -s filename_link        fg=cyan
+ble-face -s filename_other       none
+ble-face -s filename_url         fg=blue,underline
+
+# Autosuggestion: plain grey text, no background.
+ble-face -s auto_complete        fg=242
+bleopt complete_auto_delay=120
+
+# Faces that draw a background by default: make them text-only too.
+ble-face -s menu_filter_input       fg=yellow
+ble-face -s syntax_history_expansion fg=yellow
+ble-face -s region                  fg=black,bg=white   # the actual selection (Shift+arrows) keeps a background on purpose
+
+# Hide the "[ble: exit N]" marker printed after a failing command.
+bleopt exec_errexit_mark=

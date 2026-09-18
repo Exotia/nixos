@@ -65,7 +65,7 @@ apply_template() {
 
 # Mappings (Template -> Target)
 apply_template "$TEMPLATES_DIR/waybar.css.tpl" "$CONFIGS_DIR/waybar/theme.css"
-apply_template "$TEMPLATES_DIR/hyprland.conf.tpl" "$CONFIGS_DIR/hypr/theme.conf"
+apply_template "$TEMPLATES_DIR/hyprland.lua.tpl" "$CONFIGS_DIR/hypr/theme.lua"
 apply_template "$TEMPLATES_DIR/hyprlock.conf.tpl" "$CONFIGS_DIR/hypr/hyprlock-theme.conf"
 apply_template "$TEMPLATES_DIR/swayosd.css.tpl" "$CONFIGS_DIR/swayosd/theme.css"
 apply_template "$TEMPLATES_DIR/alacritty.toml.tpl" "$CONFIGS_DIR/alacritty/theme.toml"
@@ -80,7 +80,7 @@ apply_template "$TEMPLATES_DIR/chromium.theme.tpl" "$CONFIGS_DIR/theme/chromium.
 # --- RELOAD COMPONENTS ---
 pkill -x 'waybar|\.waybar-wrapped' 2>/dev/null
 sleep 0.5
-hyprctl dispatch exec waybar >/dev/null 2>&1
+hyprctl dispatch 'hl.dsp.exec_cmd("waybar")' >/dev/null 2>&1
 
 # --- GNOME THEMING ---
 if [[ -f "$HOME/nixos-dotfiles/config/theme/light.mode" ]]; then

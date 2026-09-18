@@ -2,14 +2,9 @@
 
 # Toggles the window gaps globally between no gaps and the default 10/5/2.
 
-gaps=$(hyprctl getoption general:gaps_out -j | jq -r '.custom' | awk '{print $1}')
-
-if [[ $gaps == "0" ]]; then
-  hyprctl keyword general:gaps_out 10
-  hyprctl keyword general:gaps_in 5
-  hyprctl keyword general:border_size 2
+hyprctl eval '
+if hl.get_config("general.gaps_out").top == 0 then
+  hl.config({ ["general.gaps_out"] = 10, ["general.gaps_in"] = 5, ["general.border_size"] = 2 })
 else
-  hyprctl keyword general:gaps_out 0
-  hyprctl keyword general:gaps_in 0
-  hyprctl keyword general:border_size 0
-fi
+  hl.config({ ["general.gaps_out"] = 0, ["general.gaps_in"] = 0, ["general.border_size"] = 0 })
+end'

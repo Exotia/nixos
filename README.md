@@ -20,10 +20,11 @@ home/
   theming.nix             cursor, GTK, Qt, dark mode
   apps.nix                web-app desktop entries, default applications
 config/                   everything symlinked into ~/.config (edits apply live, no rebuild)
-  hypr/hyprland.conf      only source= lines
+  hypr/hyprland.lua       only require() lines
   hypr/bindings/          apps, windows, system, clipboard, media
-  hypr/rules/             one window-rule file per app, sourced by glob
-  hypr/*.conf             autostart, input, looknfeel, monitors, envs, hypridle, hyprlock
+  hypr/rules/             one window-rule file per app, loaded by require("./rules/*.lua")
+  hypr/*.lua              autostart, input, looknfeel, monitors, envs (Hyprland Lua config)
+  hypr/*.conf             hypridle, hyprlock, hyprsunset, xdph (still hyprlang)
   scripts/                nix-* helper scripts, on PATH
   themes/<name>/          colors.toml, backgrounds/, generated files
   theme -> themes/<name>  the active theme (switch with nix-theme-set)
@@ -43,8 +44,8 @@ Only Nix files need a rebuild. Files under `config/` are live.
 
 **An app with a shortcut**
 1. Package: one line in `home/packages/apps.nix`.
-2. Shortcut: in `config/hypr/bindings/apps.conf` define `$myapp = uwsm-app -- myapp` and add `bind = SUPER, X, exec, $myapp`.
-3. Optional window rule: create `config/hypr/rules/myapp.conf`. It is picked up automatically.
+2. Shortcut: in `config/hypr/bindings/apps.lua` define `local myapp = "uwsm-app -- myapp"` and add `hl.bind("SUPER + X", hl.dsp.exec_cmd(myapp))`.
+3. Optional window rule: create `config/hypr/rules/myapp.lua`. It is picked up automatically.
 4. Optional web app or file association: `home/apps.nix`.
 5. Add the shortcut to the list in `config/scripts/nix-menu-keybindings`.
 

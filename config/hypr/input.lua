@@ -1,0 +1,35 @@
+-- Input devices. See https://wiki.hypr.land/Configuring/Variables/#input
+hl.config({
+    input = {
+        kb_layout  = "de",
+        kb_variant = "",
+        kb_model   = "",
+        kb_options = "compose:caps", -- Caps Lock acts as Compose key. Add ,grp:alts_toggle to switch layouts with L-Alt + R-Alt
+        kb_rules   = "",
+
+        follow_mouse = 1,
+        sensitivity  = 0, -- -1.0 - 1.0, 0 means no modification
+        -- force_no_accel = true, -- turn off mouse acceleration
+
+        repeat_rate  = 40,
+        repeat_delay = 600,
+
+        numlock_by_default = true,
+
+        touchpad = {
+            natural_scroll = false,
+            scroll_factor  = 0.4,
+            -- clickfinger_behavior = true, -- two-finger click for right-click
+            -- disable_while_typing = false,
+            -- drag_3fg = 1, -- left-click-and-drag with three fingers
+        },
+    },
+
+    misc = {
+        key_press_enables_dpms  = true, -- key press wakes the screen
+        mouse_move_enables_dpms = true, -- mouse move wakes the screen
+    },
+})
+
+-- Touchpad gestures. See https://wiki.hypr.land/Configuring/Gestures/
+-- hl.gesture({ fingers = 3, direction = "horizontal", action = "workspace" })

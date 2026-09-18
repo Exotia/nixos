@@ -1,0 +1,6 @@
+include=~/nixos-dotfiles/config/mako/core.ini
+
+text-color=#fff8ed
+border-color=#a6c671
+background-color=#0F0F06e6
+progress-color=source #a6c671

@@ -23,6 +23,8 @@ let
     theme = "theme";
     mpv = "mpv";
     mako = "theme";
+    fcitx5 = "fcitx5";
+    yazi = "yazi";
   };
 in
 {
@@ -32,7 +34,12 @@ in
     })
     configs) // {
     "starship.toml".source = create_symlink "${dotfiles}/starship.toml";
+    # Default applications (browser, video player). Edit config/mimeapps.list; no rebuild needed.
+    "mimeapps.list".source = create_symlink "${dotfiles}/mimeapps.list";
   };
+
+  # ble.sh reads ~/.blerc
+  home.file.".blerc".source = create_symlink "${dotfiles}/blerc";
 
   # Custom icons in the hicolor structure so simple icon names resolve
   home.file.".local/share/icons/hicolor/scalable/apps".source = create_symlink "${dotfiles}/icons";

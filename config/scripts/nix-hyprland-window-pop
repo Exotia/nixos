@@ -26,21 +26,21 @@ addr=$(echo "$active" | jq -r ".address")
 
 if [[ $pinned == "true" ]]; then
   hyprctl -q --batch \
-    "dispatch pin address:$addr;" \
-    "dispatch togglefloating address:$addr;" \
-    "dispatch tagwindow -pop address:$addr;"
+    "dispatch hl.dsp.window.pin({ window = 'address:$addr' });" \
+    "dispatch hl.dsp.window.float({ window = 'address:$addr' });" \
+    "dispatch hl.dsp.window.tag({ window = 'address:$addr', tag = '-pop' });"
 elif [[ -n $addr ]]; then
-  hyprctl dispatch togglefloating address:$addr
-  hyprctl dispatch resizeactive exact $width $height address:$addr
+  hyprctl dispatch "hl.dsp.window.float({ window = 'address:$addr' })"
+  hyprctl dispatch "hl.dsp.window.resize({ window = 'address:$addr', x = $width, y = $height })"
 
   if [[ -n $x && -n $y ]]; then
-    hyprctl dispatch moveactive $x $y address:$addr
+    hyprctl dispatch "hl.dsp.window.move({ window = 'address:$addr', x = $x, y = $y })"
   else
-    hyprctl dispatch centerwindow address:$addr
+    hyprctl dispatch "hl.dsp.window.center({ window = 'address:$addr' })"
   fi
 
   hyprctl -q --batch \
-    "dispatch pin address:$addr;" \
-    "dispatch alterzorder top address:$addr;" \
-    "dispatch tagwindow +pop address:$addr;"
+    "dispatch hl.dsp.window.pin({ window = 'address:$addr' });" \
+    "dispatch hl.dsp.window.alter_zorder({ window = 'address:$addr', mode = 'top' });" \
+    "dispatch hl.dsp.window.tag({ window = 'address:$addr', tag = '+pop' });"
 fi

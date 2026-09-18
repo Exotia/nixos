@@ -24,7 +24,7 @@ case "$CHOICE" in
         "$HOME/nixos-dotfiles/config/scripts/nix-lock-screen"
         ;;
     *Logout*)
-        hyprctl dispatch exit
+        hyprctl dispatch 'hl.dsp.exit()'
         ;;
     *Reboot*)
         systemctl reboot

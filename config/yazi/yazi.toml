@@ -1,0 +1,9 @@
+# yazi settings — https://yazi-rs.github.io/docs/configuration/yazi
+# Live-linked from ~/.config/yazi; edits apply on the next start, no rebuild.
+[mgr]
+show_hidden = true
+sort_by = "natural"
+sort_dir_first = true
+
+[preview]
+tab_size = 4

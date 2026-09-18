@@ -1,0 +1,2 @@
+# yazi key overrides — https://yazi-rs.github.io/docs/configuration/keymap
+# Defaults stay active; add [[mgr.prepend_keymap]] entries here to override.

@@ -8,7 +8,8 @@
     "steam.desktop": "Steam",
     "spotify.desktop": "Spotify",
     "pcmanfm.desktop": "Explorer",
-    "vesktop.desktop": "Discord"
+    "vesktop.desktop": "Discord",
+    "thunderbird.desktop": "Thunderbird"
   },
   "icons": {
     "Alacritty.desktop": "./icons/terminal.svg"
@@ -19,6 +20,7 @@
     "Alacritty.desktop",
     "obsidian.desktop",
     "LocalSend.desktop",
+    "thunderbird.desktop",
     "github.desktop",
     "steam.desktop",
     "spotify.desktop",

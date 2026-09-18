@@ -19,20 +19,11 @@
     };
   };
 
-  # Set default applications for specific file types (MIME types)
-  xdg.mimeApps = {
+  # Default applications live in config/mimeapps.list (linked by dotfiles.nix).
+
+  # Declare the standard user directories (~/Documents, ~/Downloads, ...) instead of relying on a stray user-dirs.dirs file
+  xdg.userDirs = {
     enable = true;
-    defaultApplications = {
-      "video/mp4" = [ "vlc.desktop" ];
-      "video/mpeg" = [ "vlc.desktop" ];
-      "video/ogg" = [ "vlc.desktop" ];
-      "video/quicktime" = [ "vlc.desktop" ];
-      "video/webm" = [ "vlc.desktop" ];
-      "video/x-matroska" = [ "vlc.desktop" ];
-      "video/x-ms-wmv" = [ "vlc.desktop" ];
-      "video/x-flv" = [ "vlc.desktop" ];
-      "video/x-msvideo" = [ "vlc.desktop" ];
-      "video/avi" = [ "vlc.desktop" ];
-    };
+    createDirectories = true;
   };
 }
