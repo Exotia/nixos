@@ -1,37 +1,15 @@
-{ config, lib, pkgs, ... }:
+{ pkgs, ... }:
 
+# Settings shared by every machine in this repo. Anything that depends on a
+# particular board, bootloader or peripheral belongs in hosts/<name>/ instead.
 {
-  imports =
-    [
-      # Includes the results of the hardware scan (disk layout, kernel modules, etc.)
-      ./hardware-configuration.nix
-    ];
-
-  # --- Boot & Hardware (Apple Silicon M2 Air) ---
-  # Asahi support: kernel, GPU driver, peripheral firmware and speakers/mic DSP
-  hardware.asahi = {
-    enable = true;
-    peripheralFirmwareDirectory = ./firmware; # must be tracked by git so the flake can see it
-    setupAsahiSound = true;
-  };
-
-  # Bootloader configuration (systemd-boot behind Asahi's m1n1/U-Boot)
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.systemd-boot.configurationLimit = 5; # the Asahi EFI partition is small
-  boot.loader.efi.canTouchEfiVariables = false; # U-Boot does not expose EFI variables
-  ## Kernel level of logging (disable the message from the LY login at startup)
-  boot.consoleLogLevel = 3;
-  boot.kernelParams = [ "quiet" ];
-
   hardware.graphics.enable = true;
 
   # --- Networking ---
-  networking.hostName = "oso-air";
+  # The hostname itself is set per host by mkHost in flake.nix.
   networking.networkmanager.enable = true; # Enables NetworkManager for easy WiFi/Ethernet configuration
-  networking.networkmanager.wifi.backend = "iwd"; # iwd is the working Wi-Fi backend on Asahi (Broadcom)
 
   # --- Localization ---
-  # Timezone and Locale settings
   time.timeZone = "Europe/Berlin";
   i18n.defaultLocale = "de_DE.UTF-8";
   console.keyMap = "de";
@@ -50,9 +28,6 @@
   hardware.bluetooth.enable = true; # Enables Bluetooth hardware support
   services.blueman.enable = true; # Provides a nice GUI for managing Bluetooth connections
 
-  # Power Management
-  services.power-profiles-daemon.enable = true; # Manages power profiles (performance, balanced, power-saver) to save battery
-
   # PipeWire Audio
   security.rtkit.enable = true;
   services.pipewire = {
@@ -62,22 +37,13 @@
   };
 
   # --- Desktop Environment ---
-  # Window Manager / Desktop Environment setup
   programs.hyprland = {
     enable = true; # Enables the Hyprland Wayland compositor
     xwayland.enable = true; # Enables XWayland to support legacy X11 applications that aren't native to Wayland yet
     withUWSM = true; # Uses Universal Wayland Session Manager for proper process and environment variable management
   };
 
-  # wireplumber does not exit on SIGTERM at shutdown (Asahi audio driver), so systemd waited the default
-  # 90 s before killing it on every reboot. A 5 s stop timeout makes reboot immediate; the kill is harmless.
-  systemd.user.services.wireplumber = {
-    overrideStrategy = "asDropin";
-    serviceConfig.TimeoutStopSec = "5s";
-  };
-  # Never let any other hung unit hold a reboot for longer than this either.
-  # systemd.extraConfig / systemd.user.extraConfig were removed from nixpkgs; the
-  # structured settings options replace them.
+  # Never let a hung unit hold a reboot for longer than this.
   systemd.settings.Manager.DefaultTimeoutStopSec = "15s";
   systemd.user.settings.Manager.DefaultTimeoutStopSec = "15s";
 
@@ -92,11 +58,10 @@
   };
 
   # --- Users ---
-  # User Configuration
   users.users.oso = {
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" ]; # 'wheel' grants you sudo privileges, 'networkmanager' lets you change wifi without password
-    packages = with pkgs; [ ]; # User-specific packages are managed in home.nix instead of here
+    packages = with pkgs; [ ]; # User-specific packages are managed in home/ instead of here
   };
 
   # --- System Packages ---
@@ -137,8 +102,4 @@
     "brave/policies/managed/color.json".source = "/home/oso/nixos-dotfiles/config/theme/brave-policy.json";
     "chromium/policies/managed/color.json".source = "/home/oso/nixos-dotfiles/config/theme/brave-policy.json";
   };
-
-
-  # State version (Do not change this! It ensures backwards compatibility with databases created when you installed NixOS)
-  system.stateVersion = "26.05";
 }

@@ -1,6 +1,8 @@
 { config, ... }:
 
-# Home Manager entry point. Each concern lives in its own module under home/.
+# Home Manager settings shared by every host. Per-host package choices live in
+# home/profiles/<hostname>.nix, which imports this file.
+#
 #   home/packages/*.nix  what is installed (cli, dev, desktop, apps)
 #   home/dotfiles.nix    ~/.config symlinks into config/
 #   home/shell.nix       bash aliases and prompt
@@ -9,15 +11,15 @@
 #   home/apps.nix        web-app desktop entries, default applications
 {
   imports = [
-    ./home/packages/cli.nix
-    ./home/packages/dev.nix
-    ./home/packages/desktop.nix
-    ./home/packages/apps.nix
-    ./home/dotfiles.nix
-    ./home/shell.nix
-    ./home/neovim.nix
-    ./home/theming.nix
-    ./home/apps.nix
+    ./packages/cli.nix
+    ./packages/dev.nix
+    ./packages/desktop.nix
+    ./packages/apps.nix
+    ./dotfiles.nix
+    ./shell.nix
+    ./neovim.nix
+    ./theming.nix
+    ./apps.nix
   ];
 
   home.username = "oso";
