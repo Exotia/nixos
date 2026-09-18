@@ -16,67 +16,106 @@ symlinks dangle and Hyprland starts with no configuration.
 
 ## Raspberry Pi 5
 
-1. **Write a stock image.** Download the `nixos-unstable` generic AArch64 SD
-   image. The 26.05 release images do not carry the Pi 5 boot files, so an
-   unstable image is required.
+### 1. Write the stock image
 
-   ```bash
-   zstd -d nixos-sd-image-*-aarch64-linux.img.zst
-   sudo dd if=nixos-sd-image-*-aarch64-linux.img of=/dev/sdX bs=4M status=progress conv=fsync
-   ```
+Use a `nixos-unstable` image. The 26.05 release images do not carry the Pi 5
+boot files. The aarch64 image published by Hydra is the installer variant: it
+autologins as `nixos`, gives that account passwordless sudo, and runs sshd.
 
-   Check `lsblk` for the right device first. This erases the card.
+```bash
+curl -L -o nixos-sd.img.zst \
+  'https://hydra.nixos.org/job/nixos/trunk-combined/nixos.sd_image.aarch64-linux/latest/download/1'
+zstd -d nixos-sd.img.zst -o nixos-sd.img
+```
 
-2. **Boot the Pi** with a keyboard and a monitor on HDMI. The stock image logs
-   in as `nixos` with no password and grows the root partition on first boot.
+Find the card, then write it. Check the size and model in the output before
+running `dd`, because the wrong device here destroys the wrong disk.
 
-3. **Get on the network.** Ethernet needs nothing. For Wi-Fi:
+```bash
+lsblk -o NAME,SIZE,TYPE,MODEL,TRAN
+sudo dd if=nixos-sd.img of=/dev/sdX bs=4M status=progress conv=fsync
+```
 
-   ```bash
-   sudo systemctl start wpa_supplicant
-   nmtui          # or: wpa_cli, depending on the image
-   ```
+If the Pi does not boot at all, try the `sd_image_new_kernel` job instead,
+which ships a newer kernel.
 
-4. **Clone and build.**
+### 2. First boot
 
-   ```bash
-   nix-shell -p git --run 'git clone https://github.com/Exotia/nixos.git ~/nixos-dotfiles'
-   sudo nixos-rebuild boot --flake ~/nixos-dotfiles#oso-pi
-   sudo reboot
-   ```
+Put the card in the Pi, attach HDMI and a keyboard, power it on. It autologins
+as `nixos` and grows the root partition.
 
-   Use `boot` rather than `switch` here. The first activation replaces the
-   bootloader and the firmware partition, and a reboot is cleaner than
-   switching a running system out from under itself.
+Get on the network. Ethernet needs nothing. For Wi-Fi:
 
-   This first build compiles the Raspberry Pi vendor kernel, which is in no
-   binary cache. On the Pi itself that takes hours. To avoid it, either build
-   on a faster `aarch64-linux` machine and push the result (see below), or
-   switch the host to the cached mainline kernel by uncommenting the
-   `boot.kernelPackages` line in `hosts/oso-pi/default.nix`.
+```bash
+sudo systemctl start wpa_supplicant
+nmtui
+```
 
-5. **Log in** as `oso` with the initial password `nixos`, then change it:
+### 3. Choose where to build
 
-   ```bash
-   passwd
-   ```
+The Raspberry Pi vendor kernel is in no binary cache, so somebody has to
+compile it. Building it on the Pi takes hours. The Air is also `aarch64-linux`,
+so it can build the whole system natively and copy the result over. That is the
+faster path by a wide margin.
 
-6. **Reconnect Wi-Fi** under your own account with `nmtui`. Wi-Fi is not
-   declared in this repo, so nothing is pre-seeded.
+**Build on the Air (recommended).** On the Pi, authorise the Air's key and note
+the address:
 
-### Building the Pi's system on the Air
+```bash
+mkdir -p ~/.ssh && curl -L https://github.com/Exotia.keys >> ~/.ssh/authorized_keys
+ip -4 addr show scope global | grep inet
+```
 
-Both machines are `aarch64-linux`, so the Air can build for the Pi natively and
-copy the result over SSH. This is much faster than building on the Pi.
+Then, from the Air:
+
+```bash
+nixos-rebuild switch --flake ~/nixos-dotfiles#oso-pi \
+  --target-host nixos@<pi-ip> --use-remote-sudo
+```
+
+**Or build on the Pi.** Slow, but needs nothing else:
+
+```bash
+nix-shell -p git --run 'git clone https://github.com/Exotia/nixos.git ~/nixos-dotfiles'
+sudo nixos-rebuild boot --flake ~/nixos-dotfiles#oso-pi
+```
+
+To skip the kernel compile entirely, uncomment the `boot.kernelPackages` line
+in `hosts/oso-pi/default.nix` first. That uses the cached mainline kernel, at
+some risk to HDMI and the GPU.
+
+### 4. Reboot and finish
+
+```bash
+sudo reboot
+```
+
+Log in as `oso` with the initial password `nixos`, then immediately:
+
+```bash
+passwd
+```
+
+Clone the repo into place. Everything under `config/` is symlinked live from
+`~/nixos-dotfiles`, so until this exists Hyprland starts with no configuration:
+
+```bash
+git clone https://github.com/Exotia/nixos.git ~/nixos-dotfiles
+```
+
+Log out and back in. Reconnect Wi-Fi under your own account with `nmtui`;
+nothing about Wi-Fi is declared in this repo.
+
+From here the Pi answers to `oso-pi.local`, and later rebuilds can come from
+the Air:
 
 ```bash
 nixos-rebuild switch --flake ~/nixos-dotfiles#oso-pi \
   --target-host oso@oso-pi.local --use-remote-sudo
 ```
 
-SSH on the Pi accepts only the key in `hosts/oso-pi/authorized_keys.pub`.
-Replace that file if you use a different key. The Pi announces itself over
-mDNS as `oso-pi.local`.
+That uses the key in `hosts/oso-pi/authorized_keys.pub`. Replace that file if
+you use a different one.
 
 ## Adding another machine
 
