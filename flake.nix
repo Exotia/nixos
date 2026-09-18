@@ -61,10 +61,10 @@
           modules = [ nixos-apple-silicon.nixosModules.apple-silicon-support ];
         };
 
-        # Raspberry Pi 5
+        # Raspberry Pi 4
         oso-pi = mkHost {
           name = "oso-pi";
-          modules = [ nixos-hardware.nixosModules.raspberry-pi-5 ];
+          modules = [ nixos-hardware.nixosModules.raspberry-pi-4 ];
         };
       };
     };

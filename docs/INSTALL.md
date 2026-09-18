@@ -12,15 +12,15 @@ symlinks dangle and Hyprland starts with no configuration.
 | Host | Machine | Attribute |
 |---|---|---|
 | `oso-air` | MacBook Air M2, Asahi | `.#oso-air` |
-| `oso-pi` | Raspberry Pi 5 | `.#oso-pi` |
+| `oso-pi` | Raspberry Pi 4 | `.#oso-pi` |
 
-## Raspberry Pi 5
+## Raspberry Pi 4
 
 ### 1. Write the stock image
 
-Use a `nixos-unstable` image. The 26.05 release images do not carry the Pi 5
-boot files. The aarch64 image published by Hydra is the installer variant: it
-autologins as `nixos`, gives that account passwordless sudo, and runs sshd.
+The aarch64 image published by Hydra is the installer variant: it autologins
+as `nixos`, gives that account passwordless sudo, and runs sshd. A
+`nixos-unstable` image is used here because that is what this flake tracks.
 
 Hydra's `latest/download/1` shortcut serves an HTML page rather than the
 image, so resolve the build and its product name first:
@@ -44,6 +44,11 @@ sudo dd if=nixos-sd.img of=/dev/sdX bs=4M status=progress conv=fsync
 
 If the Pi does not boot at all, try the `sd_image_new_kernel` job instead,
 which ships a newer kernel.
+
+Check which board you actually have before going further. `cat
+/proc/device-tree/model` on the running Pi settles it, and the host in this
+repo is built for a Pi 4. A Pi 5 needs `nixos-hardware`'s `raspberry-pi-5`
+module instead, along with a different set of GPU firmware files.
 
 ### 2. First boot
 

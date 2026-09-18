@@ -5,7 +5,7 @@ NixOS + Home Manager configuration running Hyprland, shared across machines.
 | Host | Machine |
 |---|---|
 | `oso-air` | MacBook Air M2, Asahi, aarch64 |
-| `oso-pi` | Raspberry Pi 5, aarch64 |
+| `oso-pi` | Raspberry Pi 4, aarch64 |
 
 Installing on a new machine, including adding a host of your own, is
 documented in [docs/INSTALL.md](docs/INSTALL.md).
@@ -16,7 +16,7 @@ documented in [docs/INSTALL.md](docs/INSTALL.md).
 flake.nix                 inputs and the mkHost helper; one call per machine
 modules/common.nix        portable system config: locale, Hyprland, ly, audio, fonts, users, gc
 hosts/oso-air/            MacBook Air: Asahi firmware, systemd-boot, iwd, power profiles
-hosts/oso-pi/             Raspberry Pi 5: firmware partition, U-Boot, SSH, mDNS
+hosts/oso-pi/             Raspberry Pi 4: firmware partition, U-Boot, SSH, mDNS
 home/common.nix           Home Manager entry point, only imports + identity
 home/profiles/<host>.nix  which package sets that machine gets
 home/
@@ -92,5 +92,5 @@ Copy an existing directory under `config/themes/`, edit `colors.toml`, put image
 - Caps Lock is a Compose key.
 - The ly login screen needs `/etc/ly/custom-sessions` to exist. `modules/common.nix` creates it with a tmpfiles rule.
 - A flake cannot see files Git does not track. `git add` new files before rebuilding.
-- The Pi 5 uses Raspberry Pi's vendor kernel, which no binary cache carries. The first build compiles it.
-- The Pi's firmware partition is only 30 MB, so `hosts/oso-pi` strips the `start*.elf` GPU firmware that a Pi 5 never loads. Without that the firmware install runs out of space.
+- The Pi uses Raspberry Pi's vendor kernel, which no binary cache carries. The first build compiles it.
+- The Pi's firmware partition is only 30 MB, so `hosts/oso-pi` strips the GPU firmware for Pi 3 and earlier and keeps only the `start4*` set. Without that the firmware install runs out of space.
